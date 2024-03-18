@@ -1,7 +1,7 @@
 import './App.css';
 
 function App() {
-  return <>StudyRoomzzzzzzzzzzzzzzzz</>;
+  return <>StudyRoom</>;
 }
 
 export default App;
