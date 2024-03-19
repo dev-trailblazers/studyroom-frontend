@@ -25,6 +25,7 @@ body,
     sans-serif;
   color: #4b4b4b;
   font-size: 16px;
+  word-break: keep-all;
 }
 
 html,

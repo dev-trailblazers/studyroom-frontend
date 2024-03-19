@@ -19,6 +19,7 @@ module.exports = {
     'no-undef': 'off',
     'react/no-unknown-property': 'off',
     'react-hooks/rules-of-hooks': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
 };
