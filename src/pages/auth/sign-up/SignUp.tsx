@@ -33,12 +33,10 @@ const SignUp = () => {
                 <div className="w-3/4">
                   <Input
                     label="아이디"
-                    placeholder="아이디"
                     value=""
                     onChange={(event) => {
                       return;
                     }}
-                    id="id"
                   />
                 </div>
                 <div className="w-1/4">
@@ -54,34 +52,28 @@ const SignUp = () => {
               <Input
                 type="password"
                 label="비밀번호"
-                placeholder="비밀번호"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="password"
               />
               <Input
                 type="password"
                 label="비밀번호 확인"
-                placeholder="비밀번호 확인"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="password-check"
               />
               <div className="w-full flex gap-2">
                 <div className="w-3/4">
                   <Input
                     type="email"
                     label="이메일"
-                    placeholder="이메일"
-                    value=""
+                    value="sdfsd"
                     onChange={(event) => {
                       return;
                     }}
-                    id="email"
                   />
                 </div>
                 <div className="w-1/4">
@@ -97,36 +89,19 @@ const SignUp = () => {
               <Input
                 type="text"
                 label="이름"
-                placeholder="이름"
-                value=""
+                value="sdf"
                 onChange={(event) => {
                   return;
                 }}
-                id="name"
               />
               <Input
                 type="number"
                 label="나이"
-                placeholder="나이"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="age"
               />
-              {/* <Select
-                label="안녕"
-                value=""
-                onChange={(value) => {
-                  return;
-                }}
-                placeholder={''}
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-              >
-                <Option value="a">a</Option>
-                <Option value="b">b</Option>
-              </Select> */}
               <Select
                 options={Education}
                 placeholder="학력"
