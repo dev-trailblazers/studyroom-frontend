@@ -1,9 +1,12 @@
+import { useEffect, useState } from 'react';
 import Logo from '../../../assets/logo.png';
-import Kakao from '../../../assets/kakao_logo.svg';
 
 import { Button, Input, Select } from '../../../components';
+import { Education } from '../../../data/Education';
 
 const SignUp = () => {
+  const [select, setSelect] = useState('');
+
   return (
     <div className="w-screen h-screen bg-blue_05 ">
       <div className="mx-auto max-w-[480px] h-full flex flex-col items-center gap-5 pt-[110px]">
@@ -111,17 +114,24 @@ const SignUp = () => {
                 }}
                 id="age"
               />
-              <Select
-                label="학력"
-                options={[
-                  { label: '어쩌고', value: '1' },
-                  { label: '저쩌고', value: '2' },
-                ]}
-                placeholder="학력"
+              {/* <Select
+                label="안녕"
                 value=""
-                onChange={(event) => {
+                onChange={(value) => {
                   return;
                 }}
+                placeholder={''}
+                onPointerEnterCapture={() => {}}
+                onPointerLeaveCapture={() => {}}
+              >
+                <Option value="a">a</Option>
+                <Option value="b">b</Option>
+              </Select> */}
+              <Select
+                options={Education}
+                placeholder="학력"
+                value={select}
+                setValue={(value) => setSelect(value ?? '')}
               />
             </form>
             <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
