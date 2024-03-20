@@ -1,43 +1,38 @@
-import { useId } from 'react';
+import { Select as CustomSelect, Option } from '@material-tailwind/react';
 
 interface SelectProps {
-  label: string;
   options: { label: string; value: string }[];
   placeholder?: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  setValue: (value: string | undefined) => void;
 }
 
-const Select = ({
-  label,
-  options,
-  placeholder,
-  value,
-  onChange,
-}: SelectProps) => {
-  const uid = useId();
+const Select = ({ options, placeholder, value, setValue }: SelectProps) => {
   return (
-    <>
-      <label className="sr-only" htmlFor={`${uid}-select`}>
-        {label}
-      </label>
-      <select
-        name={`${uid}-select`}
-        id={`${uid}-select`}
-        className="border border-gray_DD border-solid rounded-[10px] py-3 px-5 w-full text-[12px] outline-none placeholder-gray_DD"
-        value={value}
-        onChange={onChange}
-      >
-        <option value="" disabled hidden>
-          {placeholder}
-        </option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </>
+    <CustomSelect
+      label={placeholder}
+      value={value}
+      data-value={value.length > 0 ? 'true' : 'false'}
+      onChange={setValue}
+      placeholder={''}
+      onPointerEnterCapture={{}}
+      onPointerLeaveCapture={{}}
+      className={`peer h-[40px] border-gray_DD odd:text-[12px]  border ${value.length > 0 && 'border-t-0'} text-black aria-expanded:border-t-0`}
+      labelProps={{
+        className:
+          'pl-5 pt-1 text-gray_CC text-[12px] peer-aria-expanded:pt-0 peer-data-[value=true]:pt-0 before:absolute before:left-0 before:top-[-0.5px] before:border-l before:border-gray_DD before:border-t before:rounded-tl-lg before:border-solid  after:border-r after:border-gray_DD after:w-[220px] after:border-t after:rounded-tr-lg after:border-solid after:absolute after:right-0 after:top-[-0.5px]',
+      }}
+    >
+      {options.map((opt) => (
+        <Option
+          key={opt.value}
+          value={opt.value}
+          className="text-[12px] text-black"
+        >
+          {opt.label}
+        </Option>
+      ))}
+    </CustomSelect>
   );
 };
 

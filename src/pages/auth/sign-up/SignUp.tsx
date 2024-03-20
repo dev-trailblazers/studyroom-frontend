@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import Logo from '../../../assets/logo.png';
-import Kakao from '../../../assets/kakao_logo.svg';
 
 import { Button, Input, Select } from '../../../components';
+import { Education } from '../../../data/Education';
 
 const SignUp = () => {
+  const [select, setSelect] = useState('');
+
   return (
     <div className="w-screen h-screen bg-blue_05 ">
       <div className="mx-auto max-w-[480px] h-full flex flex-col items-center gap-5 pt-[110px]">
@@ -30,12 +33,10 @@ const SignUp = () => {
                 <div className="w-3/4">
                   <Input
                     label="아이디"
-                    placeholder="아이디"
                     value=""
                     onChange={(event) => {
                       return;
                     }}
-                    id="id"
                   />
                 </div>
                 <div className="w-1/4">
@@ -51,34 +52,28 @@ const SignUp = () => {
               <Input
                 type="password"
                 label="비밀번호"
-                placeholder="비밀번호"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="password"
               />
               <Input
                 type="password"
                 label="비밀번호 확인"
-                placeholder="비밀번호 확인"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="password-check"
               />
               <div className="w-full flex gap-2">
                 <div className="w-3/4">
                   <Input
                     type="email"
                     label="이메일"
-                    placeholder="이메일"
-                    value=""
+                    value="sdfsd"
                     onChange={(event) => {
                       return;
                     }}
-                    id="email"
                   />
                 </div>
                 <div className="w-1/4">
@@ -94,34 +89,24 @@ const SignUp = () => {
               <Input
                 type="text"
                 label="이름"
-                placeholder="이름"
-                value=""
+                value="sdf"
                 onChange={(event) => {
                   return;
                 }}
-                id="name"
               />
               <Input
                 type="number"
                 label="나이"
-                placeholder="나이"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="age"
               />
               <Select
-                label="학력"
-                options={[
-                  { label: '어쩌고', value: '1' },
-                  { label: '저쩌고', value: '2' },
-                ]}
+                options={Education}
                 placeholder="학력"
-                value=""
-                onChange={(event) => {
-                  return;
-                }}
+                value={select}
+                setValue={(value) => setSelect(value ?? '')}
               />
             </form>
             <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
