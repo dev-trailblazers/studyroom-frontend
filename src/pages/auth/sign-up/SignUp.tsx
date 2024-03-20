@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Logo from '../../../assets/logo.png';
 
 import { Button, Input, Select } from '../../../components';
