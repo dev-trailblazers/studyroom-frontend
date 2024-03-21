@@ -97,7 +97,7 @@ const SignUp = () => {
               <Input
                 type="number"
                 label="나이"
-                value=""
+                value="23"
                 onChange={(event) => {
                   return;
                 }}
