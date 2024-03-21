@@ -32,22 +32,22 @@ const SignIn = () => {
             >
               <Input
                 label="아이디"
-                placeholder="아이디를 입력해 주세요"
+                //placeholder="아이디를 입력해 주세요"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="id"
+                //id="id"
               />
               <Input
                 type="password"
                 label="비밀번호"
-                placeholder="비밀번호를 입력해 주세요"
+                //placeholder="비밀번호를 입력해 주세요"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                id="password"
+                //id="password"
               />
             </form>
             <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
