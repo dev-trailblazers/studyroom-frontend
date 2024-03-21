@@ -18,10 +18,10 @@ const Input = ({ type = 'text', label, value, onChange }: InputProps) => {
       onPointerEnterCapture={{}}
       onPointerLeaveCapture={{}}
       crossOrigin={{}}
-      className={`peer  peer-placeholder-shown:text-[12px] h-[40px] peer: placeholder-shown:border-gray_DD placeholder-shown:border-t-gray_DD border-gray_DD border  focus:border-gray_DD text-black focus:border-t `}
+      className={`h-[40px] px-[16px] peer relative placeholder-shown:border-gray_DD placeholder-shown:border-t-gray_DD focus:border-gray_DD first:border-t text-black data-[value=true]:border-gray_DD data-[value=true]:border-t-0 focus:border text-[12px]
+`}
       labelProps={{
-        className:
-          'text-gray_CC peer-focus:text-gray_CC peer-focus:before:border-t peer-focus:before:border-l peer-focus:before:border-gray_DD peer-focus:after:border-t peer-focus:after:border-r peer-placeholder-shown:pt-1 peer-placeholder-shown:text-gray_DD peer-placeholder-shown:text-[12px] peer-focus:pt-0 peer-data-[value=true]:pt-0 peer-data-[value=true]:border-t-gray_DD peer-data-[value=true]:border-l-gray_DD before:border-gray_DD before:border-tl before:rounded-tl-lg after:border-tr after:border-gray_DD after:rounded-tr-lg peer-focus:before:border-t-gray_DD ',
+        className: `peer-placeholder-shown:text-gray_DD peer-placeholder-shown:!text-[12px] peer-placeholder-shown:!pl-1 peer-placeholder-shown:!pt-1 peer-focus:!text-[11px] peer-focus:!pt-0 peer-focus:!pl-0 peer-focus:text-[#9e9e9e] before:border-gray_DD after:border-gray_DD  peer-focus:before:!border-t peer-focus:before:!border-l peer-focus:before:!border-gray_DD  peer-focus:after:!border-t peer-focus:after:!border-r  peer-focus:after:!border-gray_DD `,
       }}
     />
   );
