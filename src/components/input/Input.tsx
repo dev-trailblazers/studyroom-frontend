@@ -5,9 +5,16 @@ interface InputProps {
   label: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
-const Input = ({ type = 'text', label, value, onChange }: InputProps) => {
+const Input = ({
+  type = 'text',
+  label,
+  value,
+  onChange,
+  onKeyPress,
+}: InputProps) => {
   return (
     <CustomInput
       data-value={value.length > 0 ? 'true' : 'false'}
@@ -15,6 +22,7 @@ const Input = ({ type = 'text', label, value, onChange }: InputProps) => {
       value={value}
       type={type}
       onChange={onChange}
+      onKeyPress={onKeyPress}
       onPointerEnterCapture={{}}
       onPointerLeaveCapture={{}}
       crossOrigin={{}}
