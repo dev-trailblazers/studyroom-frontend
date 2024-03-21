@@ -9,18 +9,20 @@ const SignIn = () => {
 
   return (
     <div className="w-screen h-screen bg-blue_05 ">
-      <div className="mx-auto max-w-[480px] h-full flex flex-col items-center gap-5 pt-[110px]">
+      <div className="mx-auto max-w-[480px] h-full flex flex-col items-center gap-5 pt-[110px] pb-5">
         {/* Login Section */}
         <section className="w-full ">
-          <div className="flex justify-center items-center gap-2.5 mb-[15px]">
-            <h1
-              className="text-[60px] font-semibold text-main"
-              style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.1)' }}
-            >
-              StudyRoom
-            </h1>
-            <img src={Logo} alt="임시 로고" />
-          </div>
+          <a href="/">
+            <div className="flex justify-center items-center gap-2.5 mb-[15px]">
+              <h1
+                className="text-[60px] font-semibold text-main"
+                style={{ textShadow: '2px 2px 10px rgba(0,0,0,0.1)' }}
+              >
+                StudyRoom
+              </h1>
+              <img src={Logo} alt="임시 로고" />
+            </div>
+          </a>
           <div className="shadow-box_01 bg-white rounded-2xl flex flex-col items-center  py-[60px]">
             <span className="text-[32px] leading-10 font-extrabold mb-[65px]">
               걱정 없이 함께 하는 <br />
@@ -32,27 +34,24 @@ const SignIn = () => {
             >
               <Input
                 label="아이디"
-                //placeholder="아이디를 입력해 주세요"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                //id="id"
               />
               <Input
                 type="password"
                 label="비밀번호"
-                //placeholder="비밀번호를 입력해 주세요"
                 value=""
                 onChange={(event) => {
                   return;
                 }}
-                //id="password"
               />
             </form>
             <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
               <Button
                 text="로그인"
+                blueType="dark"
                 onClick={() => {
                   return;
                 }}
