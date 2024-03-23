@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Input, Select } from '../../components';
+import { Button, Input, Select } from '../../components';
 import { ViewList } from '../../data/ViewList';
 
 const inStudyPage = 4;
@@ -88,7 +88,11 @@ const Home = () => {
         </div>
         {/* header Section */}
         <div className="flex items-center justify-between">
-          <h1 className="text-[54px] font-semibold text-blue_01">StudyRoom</h1>
+          <a href="/">
+            <h1 className="text-[54px] font-semibold text-blue_01">
+              StudyRoom
+            </h1>
+          </a>
           <div className="w-[500px] h-[60px] flex justify-between items-center bg-blue_02 border rounded-[10px] ml-auto">
             {['홈', '스터디', '공지사항', '내정보'].map((label, index) => (
               <div
@@ -153,7 +157,7 @@ const Home = () => {
           </div>
         </div>
         {/* recruitStudy Section*/}
-        <div className=" pt-5 pl-5 pr-5 flex flex-col h-[1100px] rounded-[15px] bg-blue_05 shadow-box_03">
+        <div className=" py-5 pl-5 pr-5 flex flex-col rounded-[15px] bg-blue_05 shadow-box_03">
           {/* recruitStudy Header Section*/}
           <div className="flex justify-between items-center">
             <h1 className="text-[24px] text-main font-semibold">
@@ -168,16 +172,15 @@ const Home = () => {
                   setValue={(value) => setSelect(value ?? '')}
                 />
               </div>
-              <button
-                className={`w-[200px] h-[40px] border border-blue_02 border-solid rounded-[10px] text-[12px] font-semibold ${
+              <Button
+                text={recuritButtonActive ? '모집중 스터디' : '전체 스터디'}
+                className={`w-[126px] h-[40px] border border-blue_02 border-solid rounded-[10px] text-[12px] font-semibold ${
                   recuritButtonActive
                     ? 'bg-main text-white'
                     : 'bg-white text-blue_02 '
                 }`}
                 onClick={onRecuritButton}
-              >
-                {recuritButtonActive ? '모집중 스터디' : '전체 스터디'}
-              </button>
+              />
               <div className="w-1/4">
                 <Input
                   label="스터디 검색"
@@ -207,7 +210,7 @@ const Home = () => {
       <div className="mt-[40px] h-[180px] bg-gray-100">
         <h1>약관동의 등등</h1>
       </div>
-      {/* fixed Butto Section*/}
+      {/* fixed Button Section*/}
       <div className="flex flex-col fixed bottom-5 right-3 gap-3 ">
         <button
           className="bg-white text-blue_01 font-bold w-[40px] h-[40px] rounded-full shadow-box_03 transition duration-300 transform hover:scale-105"
