@@ -49,11 +49,12 @@ const SignUp = () => {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/member/username`,
         {
-          // mode: 'no-cors',
           method: 'POST',
           credentials: 'include',
           headers: {
             'Content-Type': 'text/plain',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Origin': 'http://localhost:5173',
           },
           body: userInfo.username,
         }

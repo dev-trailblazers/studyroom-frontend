@@ -7,6 +7,7 @@ interface InputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  className?: string;
 }
 
 const Input = ({
@@ -16,6 +17,7 @@ const Input = ({
   onChange,
   onKeyPress,
   disabled,
+  className,
 }: InputProps) => {
   return (
     <CustomInput
@@ -29,6 +31,9 @@ const Input = ({
       onPointerEnterCapture={{}}
       onPointerLeaveCapture={{}}
       crossOrigin={{}}
+      containerProps={{
+        className: `${className && `min-w-0 ${className}`}`,
+      }}
       className={`bg-white h-[40px] px-[16px] peer relative placeholder-shown:border-gray_DD placeholder-shown:border-t-gray_DD focus:border-gray_DD first:border-t !text-black data-[value=true]:border-gray_DD data-[value=true]:border-t-0 focus:!border focus:!border-t-0  text-[12px]
 `}
       labelProps={{
