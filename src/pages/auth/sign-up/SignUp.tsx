@@ -18,6 +18,11 @@ interface UserInfo {
   [key: string]: string;
 }
 
+interface PasswordError {
+  isNotValidPassword: boolean;
+  isDifferPassword: boolean;
+}
+
 const initialUserInfo = {
   username: '',
   password: '',
@@ -26,7 +31,7 @@ const initialUserInfo = {
   name: '',
   gender: '',
   birth: '',
-  education: '',
+  // education: '',
 };
 
 // 학력은 출시 전에 추가, 현재는 이름, 나이를 text로 받으나 나중에는 변경할 수도 있음
@@ -34,10 +39,36 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
+  const [isDuplicated, setIsDuplicated] = useState<boolean | null>(null);
+  const [passwordError, setPasswordError] = useState<PasswordError>({
+    isNotValidPassword: false,
+    isDifferPassword: false,
+  });
   const [isCertifing, setIsCertifing] = useState(false);
+
+  useEffect(() => {
+    // 패스워드와 패스워드 확인 값이 일치 여부 검사
+    setPasswordError((prev) => ({
+      ...prev,
+      isDifferPassword:
+        userInfo.password !== userInfo.passwordCheck ? true : false,
+    }));
+  }, [userInfo.passwordCheck]);
 
   // Input들의 onChange 함수 (value: 입력한 값, field: 객체 키)
   const onChangeInput = (value: string, field: string) => {
+    if (field === 'username') {
+      setIsDuplicated(null);
+    }
+
+    // 패스워드 유효성 검사
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,16}$/;
+    setPasswordError((prev) => ({
+      ...prev,
+      isNotValidPassword: !passwordRegex.test(userInfo.password) ? true : false,
+    }));
+
     const updatedObject = { ...userInfo };
     updatedObject[field] = value;
     setUserInfo(updatedObject);
@@ -45,6 +76,7 @@ const SignUp = () => {
 
   // 아이디 중복 확인(아이디는 3~16자 소문자+숫자로만 이루어짐)
   // 비밀번호 8 ~ 16자 대문자+소문자+숫자+특수문자(키패드 1번 ~ 7번까지만 '+', '=')로만 이루어짐
+  // 비밀번호 유효성 검사는 backend에서 적용한 정규식 참고하면 됨
   const onCheckDuplicatedId = async () => {
     try {
       const response = await fetch(`/api/member/username`, {
@@ -55,10 +87,18 @@ const SignUp = () => {
         },
         body: userInfo.username,
       });
-      const isDuplicated = await response.json();
+      const duplicatedResult = await response.json();
+
+      if (!duplicatedResult) {
+        alert('사용 가능한 아이디입니다.');
+      }
+
+      setIsDuplicated(duplicatedResult);
     } catch (error: any) {
+      if (error.name === 'SyntaxError') {
+        alert('아이디는 영소문자와 숫자를 하나씩 포함한 3~16자리입니다.');
+      }
       console.log(error.name);
-      console.log(error.message);
     }
   };
 
@@ -126,22 +166,37 @@ const SignUp = () => {
                   />
                 </div>
               </div>
-              <Input
-                type="password"
-                label="비밀번호"
-                value={userInfo.password}
-                onChange={(event) =>
-                  onChangeInput(event.target.value, 'password')
-                }
-              />
-              <Input
-                type="password"
-                label="비밀번호 확인"
-                value={userInfo.passwordCheck}
-                onChange={(event) =>
-                  onChangeInput(event.target.value, 'passwordCheck')
-                }
-              />
+              <div className="w-full flex flex-col gap-1">
+                <Input
+                  type="password"
+                  label="비밀번호"
+                  value={userInfo.password}
+                  onChange={(event) =>
+                    onChangeInput(event.target.value, 'password')
+                  }
+                />
+                {passwordError.isNotValidPassword && (
+                  <span className="text-[11px] text-red-400 px-2">
+                    비밀번호는 영문 대소문자와 숫자, 특수문자를 하나씩 포함한
+                    8~16자리입니다.
+                  </span>
+                )}
+              </div>
+              <div className="w-full flex flex-col gap-1">
+                <Input
+                  type="password"
+                  label="비밀번호 확인"
+                  value={userInfo.passwordCheck}
+                  onChange={(event) =>
+                    onChangeInput(event.target.value, 'passwordCheck')
+                  }
+                />
+                {passwordError.isDifferPassword && (
+                  <span className="text-[11px] text-red-400 px-2">
+                    비밀번호가 일치하지 않습니다.
+                  </span>
+                )}
+              </div>
               <div className="w-full flex gap-2">
                 <div className="w-3/4">
                   <Input

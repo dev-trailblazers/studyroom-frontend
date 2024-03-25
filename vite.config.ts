@@ -5,6 +5,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
+      // fetch(url, ~);
+      // url에 api 파라미터가 member/username이면, /api/member/username으로 사용하면 아래 작성한 target 주소+/member/username으로 요청됨
       '/api': {
         // 요청 전달 대상 서버 주소 설정
         target: 'http://localhost:8080',
