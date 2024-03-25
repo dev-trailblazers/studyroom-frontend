@@ -43,25 +43,21 @@ const SignUp = () => {
     setUserInfo(updatedObject);
   };
 
-  // 아이디 중복 확인(아이디는 소문자+숫자로만 이루어짐)
+  // 아이디 중복 확인(아이디는 3~16자 소문자+숫자로만 이루어짐)
+  // 비밀번호 8 ~ 16자 대문자+소문자+숫자+특수문자(키패드 1번 ~ 7번까지만 '+', '=')로만 이루어짐
   const onCheckDuplicatedId = async () => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/member/username`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'text/plain',
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Origin': 'http://localhost:5173',
-          },
-          body: userInfo.username,
-        }
-      );
-      console.log(response);
-      return response;
+      const response = await fetch(`/api/member/username`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: userInfo.username,
+      });
+      const isDuplicated = await response.json();
     } catch (error: any) {
+      console.log(error.name);
       console.log(error.message);
     }
   };
