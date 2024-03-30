@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react';
-import Logo from '../../../assets/logo.png';
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { Button, Input, Modal, Select } from '../../../components';
 import { Education } from '../../../data/Education';
-import { useNavigate } from 'react-router-dom';
 import { Gender } from '../../../data/Gender';
-import { useMutation, useQuery } from '@tanstack/react-query';
 
-interface UserInfo {
+import Logo from '../../../assets/logo.png';
+
+import { useTimer } from 'react-timer-hook';
+
+interface UserInfo extends SignUp {
+  passwordCheck: string;
+  code: string;
+  [key: string]: string;
+}
+
+interface SignUp {
   username: string;
   password: string;
-  passwordCheck: string;
   email: string;
-  code: string;
   name: string;
   birth: string;
   gender: string;
-  [key: string]: string;
 }
 
 interface UserInfoError {
@@ -24,10 +30,10 @@ interface UserInfoError {
   password: boolean;
   passwordCheck: boolean;
   email: boolean;
-  code: boolean;
   name: boolean;
-  gender: boolean;
   birth: boolean;
+  gender: boolean;
+  code: boolean;
 }
 
 const initialUserInfo = {
@@ -35,10 +41,10 @@ const initialUserInfo = {
   password: '',
   passwordCheck: '',
   email: '',
-  code: '',
   name: '',
-  gender: '',
   birth: '',
+  gender: '',
+  code: '',
   // education: '',
 };
 
@@ -47,15 +53,22 @@ const initialUserInfoError = {
   password: false,
   passwordCheck: false,
   email: false,
-  code: false,
   name: false,
-  gender: false,
   birth: false,
+  gender: false,
+  code: false,
 };
 
 // 학력은 출시 전에 추가, 현재는 이름, 나이를 text로 받으나 나중에는 변경할 수도 있음
 const SignUp = () => {
   const navigate = useNavigate();
+  const expiryTimestamp = new Date();
+  expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 300);
+  const { seconds, minutes, pause, restart } = useTimer({
+    expiryTimestamp,
+    autoStart: false,
+    onExpire: () => console.warn('onExpire called'),
+  });
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [userInfoError, setUserInfoError] =
@@ -119,6 +132,19 @@ const SignUp = () => {
     }
   }, [userInfo.birth]);
 
+  // 성별 유효성 검사
+  useEffect(() => {
+    if (userInfo.gender.length !== 0) {
+      setUserInfoError((prev) => ({ ...prev, gender: false }));
+    }
+  }, [userInfo.gender]);
+
+  useEffect(() => {
+    if (userInfo.code.length !== 0) {
+      setUserInfoError((prev) => ({ ...prev, code: false }));
+    }
+  }, [userInfo.code]);
+
   // 인증번호 입력 모달 on/off 시 모달에 쓰이는 데이터 초기화
   useEffect(() => {
     setUserInfoError((prev) => ({ ...prev, code: false }));
@@ -168,10 +194,17 @@ const SignUp = () => {
     }
   };
 
+  const restartTimer = () => {
+    const time = new Date();
+    time.setSeconds(time.getSeconds() + 300);
+    restart(time);
+  };
+
   // 이메일로 인증번호 보내기
   const onCertifyEmail = async () => {
     try {
-      const response = await fetch(`/api/auth/new/email`, {
+      restartTimer();
+      await fetch(`/api/auth/new/email`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -179,10 +212,17 @@ const SignUp = () => {
         },
         body: userInfo.email,
       });
-      console.log(response);
     } catch (error: any) {
       console.log(error);
     }
+  };
+
+  // 이메일로 인증번호 재전송
+  const onResendCertifyEmail = async () => {
+    alert('재전송 되었습니다.');
+
+    restartTimer();
+    await onCertifyEmail();
   };
 
   // 인증번호 모달 toggle
@@ -197,13 +237,21 @@ const SignUp = () => {
 
     onCertifyEmail();
 
+    if (!isCertifyOpen) {
+      alert('해당 이메일에 인증번호를 전송했습니다.');
+    }
+
     setIsCertifyOpen((prev) => !prev);
   };
 
   // 인증번호 서버로 보내기
   const onSendCertifyNumber = async () => {
     try {
-      // TODO 5분 지난 번호 입력 시 alert 알림 필요
+      if (minutes === 0 && seconds === 0) {
+        alert('입력 시간이 지났습니다. 인증번호 재전송 후 다시 입력해 주세요.');
+        return;
+      }
+
       const { email, code } = userInfo;
 
       if (code.length === 0) {
@@ -225,6 +273,7 @@ const SignUp = () => {
         setIsCertifyOpen(false);
         setUserInfoError((prev) => ({ ...prev, code: false }));
         setIsCertifing(true);
+        pause();
       } else {
         setUserInfoError((prev) => ({ ...prev, code: true }));
       }
@@ -234,51 +283,30 @@ const SignUp = () => {
     }
   };
 
+  // 입력하지 않은 Input이 있을 시, 에러 문구 렌더링 및 focus 이동
+  const checkEmptyInputAndFocus = () => {
+    for (const [field, value] of Object.entries(userInfo)) {
+      if (field !== 'code' && value.length === 0) {
+        setUserInfoError((prev) => ({ ...prev, [field]: true }));
+        document.getElementById(field)?.focus();
+        return true;
+      }
+    }
+    return false;
+  };
+
   // 회원가입
   const onSignUp = async () => {
     try {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (username.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, username: true }));
-        document.getElementById('username')?.focus();
+      if (checkEmptyInputAndFocus()) {
         return;
       }
 
-      if (password.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, password: true }));
-        document.getElementById('password')?.focus();
-        return;
-      }
-
-      if (passwordCheck.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, passwordCheck: true }));
-        document.getElementById('passwordCheck')?.focus();
-        return;
-      }
-
-      if (email.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, email: true }));
-        document.getElementById('email')?.focus();
-        return;
-      }
-
-      if (name.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, name: true }));
-        document.getElementById('name')?.focus();
-        return;
-      }
-
-      if (birth.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, birth: true }));
-        document.getElementById('birth')?.focus();
-        return;
-      }
-
-      if (gender.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, gender: true }));
-        document.getElementById('gender')?.focus();
+      if (password !== passwordCheck) {
+        alert('비밀번호 확인이 일치하지 않습니다.');
         return;
       }
 
@@ -422,7 +450,7 @@ const SignUp = () => {
                   </div>
                   <div className="w-1/4">
                     <Button
-                      disabled={isCertifing}
+                      disabled={isCertifing && !isCertifyOpen}
                       blueType="dark"
                       text="인증"
                       onClick={onToggleCertifyModal}
@@ -430,7 +458,6 @@ const SignUp = () => {
                     />
                   </div>
                 </div>
-                {/* 만약 이름 입력 않고 회원가입 누를 경우 빨간 줄과 동시에 focus 효과 */}
                 <div className="w-full flex flex-col gap-1">
                   <Input
                     id="name"
@@ -511,25 +538,40 @@ const SignUp = () => {
         width={350}
         height={200}
       >
-        <div className="flex flex-col gap-4">
-          <div className="w-full flex flex-col gap-1">
-            <Input
-              label="인증번호"
-              value={userInfo.code}
-              onChange={(event) => onChangeInput(event.target.value, 'code')}
-            />
+        <div
+          className={`flex flex-col ${userInfoError.code ? 'gap-1' : 'gap-4'}`}
+        >
+          <div>
+            <div className="relative w-full flex flex-col gap-1">
+              <Input
+                label="인증번호"
+                value={userInfo.code}
+                onChange={(event) => onChangeInput(event.target.value, 'code')}
+              />
+              <span className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[14px] text-red-600 font-medium">
+                {String(minutes).padStart(2, '0')}:
+                {String(seconds).padStart(2, '0')}
+              </span>
+            </div>
             {userInfoError.code && (
               <span className="text-[11px] text-red-400 px-2">
                 인증번호가 일치하지 않습니다.
               </span>
             )}
           </div>
-
-          <Button
-            blueType="dark"
-            text="인증하기"
-            onClick={onSendCertifyNumber}
-          />
+          <div className="flex gap-4">
+            <Button
+              blueType="light"
+              text="재전송"
+              onClick={onResendCertifyEmail}
+            />
+            <Button
+              disabled={minutes === 0 && seconds === 0}
+              blueType="dark"
+              text="인증하기"
+              onClick={onSendCertifyNumber}
+            />
+          </div>
         </div>
       </Modal>
     </>

@@ -20,7 +20,7 @@ const Button = ({
     <button
       disabled={disabled}
       type={type}
-      className={`shadow-box_02 w-full h-[40px] rounded-[10px] font-semibold text-center ${blueType === 'light' && 'bg-blue_05 text-black '} ${blueType === 'dark' && 'bg-blue_01 text-white'} ${className}`}
+      className={`shadow-box_02 w-full h-[40px] rounded-[10px] font-semibold text-center ${blueType === 'light' && 'bg-blue_05 text-black '} ${blueType === 'dark' && 'bg-blue_01 text-white'} ${className} disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed disabled:text-black`}
       onClick={onClick}
     >
       {text}
