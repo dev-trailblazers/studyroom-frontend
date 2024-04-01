@@ -232,12 +232,12 @@ const Home = () => {
                   placeholder="조회 순"
                   value={select}
                   setValue={(value) => setSelect(value ?? '')}
-                  className="sm_max:w-[100px] w-[200px]"
+                  className="sm_max:w-[100px] md:w-[200px]"
                 />
               </div>
               <Button
                 text={recuritButtonActive ? '모집중 스터디' : '전체 스터디'}
-                className={`sm_max:w-[100px] w-[200px] h-[40px] border border-blue_02 border-solid rounded-[10px] text-[12px] font-semibold ${
+                className={`sm_max:w-[100px] md:w-[200px] h-[40px] border border-blue_02 border-solid rounded-[10px] text-[12px] font-semibold ${
                   recuritButtonActive
                     ? 'bg-main text-white'
                     : 'bg-white text-blue_02 '
@@ -252,7 +252,7 @@ const Home = () => {
                     setStudySearch(event.target.value);
                   }}
                   onKeyPress={handleKeyPress}
-                  className="sm_max:w-[120px] w-[200px]"
+                  className="sm_max:w-[120px] md:w-[200px]"
                 />
               </div>
             </div>
