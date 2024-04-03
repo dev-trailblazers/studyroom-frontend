@@ -34,6 +34,7 @@ interface UserInfoError {
   birth: boolean;
   gender: boolean;
   code: boolean;
+  [key: string]: boolean;
 }
 
 const initialUserInfo = {
@@ -77,12 +78,8 @@ const SignUp = () => {
   const [isCertifing, setIsCertifing] = useState(false);
   const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
-  // 아이디 유효성 검사
   useEffect(() => {
-    if (userInfo.username.length !== 0) {
-      setIsDuplicated(null);
-      setUserInfoError((prev) => ({ ...prev, username: false }));
-    }
+    disappearError('username');
   }, [userInfo.username]);
 
   // 패스워드 유효성 검사
@@ -111,38 +108,24 @@ const SignUp = () => {
     }
   }, [userInfo.passwordCheck]);
 
-  // 이메일 유효성 검사
   useEffect(() => {
-    if (userInfo.email.length !== 0) {
-      setUserInfoError((prev) => ({ ...prev, email: false }));
-    }
+    disappearError('email');
   }, [userInfo.email]);
 
-  // 이름 유효성 검사
   useEffect(() => {
-    if (userInfo.name.length !== 0) {
-      setUserInfoError((prev) => ({ ...prev, name: false }));
-    }
+    disappearError('name');
   }, [userInfo.name]);
 
-  // 나이 유효성 검사
   useEffect(() => {
-    if (userInfo.birth.length !== 0) {
-      setUserInfoError((prev) => ({ ...prev, birth: false }));
-    }
+    disappearError('birth');
   }, [userInfo.birth]);
 
-  // 성별 유효성 검사
   useEffect(() => {
-    if (userInfo.gender.length !== 0) {
-      setUserInfoError((prev) => ({ ...prev, gender: false }));
-    }
+    disappearError('gender');
   }, [userInfo.gender]);
 
   useEffect(() => {
-    if (userInfo.code.length !== 0) {
-      setUserInfoError((prev) => ({ ...prev, code: false }));
-    }
+    disappearError('code');
   }, [userInfo.code]);
 
   // 인증번호 입력 모달 on/off 시 모달에 쓰이는 데이터 초기화
@@ -150,6 +133,21 @@ const SignUp = () => {
     setUserInfoError((prev) => ({ ...prev, code: false }));
     setUserInfo((prev) => ({ ...prev, code: '' }));
   }, [isCertifyOpen]);
+
+  // Input 유효성 에러 발생 -> onChange 시 사라짐
+  const disappearError = (field: string) => {
+    const newUserInfoObject = { ...userInfo };
+
+    if (newUserInfoObject[field].length !== 0) {
+      if (field === 'username') {
+        setIsDuplicated(null);
+      }
+
+      const newUserInfoErrorObject = { ...userInfoError };
+      newUserInfoErrorObject[field] = false;
+      setUserInfoError(newUserInfoErrorObject);
+    }
+  };
 
   // Input들의 onChange 함수 (value: 입력한 값, field: 객체 키)
   const onChangeInput = (value: string, field: string) => {
@@ -194,6 +192,7 @@ const SignUp = () => {
     }
   };
 
+  // 타이머 리셋
   const restartTimer = () => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + 300);
@@ -236,10 +235,6 @@ const SignUp = () => {
     }
 
     onCertifyEmail();
-
-    if (!isCertifyOpen) {
-      alert('해당 이메일에 인증번호를 전송했습니다.');
-    }
 
     setIsCertifyOpen((prev) => !prev);
   };
