@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { Button, Input, Modal, Select } from '../../../components';
-import { Education } from '../../../data/Education';
 import { Gender } from '../../../data/Gender';
 
 import Logo from '../../../assets/logo.png';
 
 import { useTimer } from 'react-timer-hook';
+import { checkEmptyInputAndFocus, onChangeInput } from '../../../utils';
 
 interface UserInfo extends SignUp {
   passwordCheck: string;
@@ -63,6 +63,7 @@ const initialUserInfoError = {
 // 학력은 출시 전에 추가, 현재는 이름, 나이를 text로 받으나 나중에는 변경할 수도 있음
 const SignUp = () => {
   const navigate = useNavigate();
+
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 300);
   const { seconds, minutes, pause, restart } = useTimer({
@@ -74,8 +75,11 @@ const SignUp = () => {
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [userInfoError, setUserInfoError] =
     useState<UserInfoError>(initialUserInfoError);
+
   const [isDuplicated, setIsDuplicated] = useState<boolean | null>(null);
   const [isCertifing, setIsCertifing] = useState(false);
+
+  // 인증번호 입력 모달
   const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
   useEffect(() => {
@@ -149,13 +153,6 @@ const SignUp = () => {
     }
   };
 
-  // Input들의 onChange 함수 (value: 입력한 값, field: 객체 키)
-  const onChangeInput = (value: string, field: string) => {
-    const updatedObject = { ...userInfo };
-    updatedObject[field] = value;
-    setUserInfo(updatedObject);
-  };
-
   // 아이디 중복 확인(아이디는 3~16자 소문자+숫자로만 이루어짐)
   // 비밀번호 8 ~ 16자 대문자+소문자+숫자+특수문자(키패드 1번 ~ 7번까지만 '+', '=')로만 이루어짐
   // 비밀번호 유효성 검사는 backend에서 적용한 정규식 참고하면 됨
@@ -179,14 +176,14 @@ const SignUp = () => {
 
       if (duplicatedResult) {
         alert('이미 사용중인 아이디입니다.');
-        setIsDuplicated(true);
       } else {
         alert('사용 가능한 아이디입니다.');
-        setIsDuplicated(false);
       }
+
+      setIsDuplicated(duplicatedResult);
     } catch (error: any) {
       if (error.name === 'SyntaxError') {
-        alert('아이디는 영소문자와 숫자를 하나씩 포함한 3~16자리입니다.');
+        alert('중복 확인 실패했습니다.');
       }
       console.log(error.name);
     }
@@ -278,25 +275,13 @@ const SignUp = () => {
     }
   };
 
-  // 입력하지 않은 Input이 있을 시, 에러 문구 렌더링 및 focus 이동
-  const checkEmptyInputAndFocus = () => {
-    for (const [field, value] of Object.entries(userInfo)) {
-      if (field !== 'code' && value.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, [field]: true }));
-        document.getElementById(field)?.focus();
-        return true;
-      }
-    }
-    return false;
-  };
-
   // 회원가입
   const onSignUp = async () => {
     try {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (checkEmptyInputAndFocus()) {
+      if (checkEmptyInputAndFocus(userInfo, setUserInfoError)) {
         return;
       }
 
@@ -370,7 +355,12 @@ const SignUp = () => {
                         label="아이디"
                         value={userInfo.username}
                         onChange={(event) =>
-                          onChangeInput(event.target.value, 'username')
+                          onChangeInput(
+                            userInfo,
+                            setUserInfo,
+                            event.target.value,
+                            'username'
+                          )
                         }
                       />
                       {userInfoError.username && (
@@ -397,7 +387,12 @@ const SignUp = () => {
                     label="비밀번호"
                     value={userInfo.password}
                     onChange={(event) =>
-                      onChangeInput(event.target.value, 'password')
+                      onChangeInput(
+                        userInfo,
+                        setUserInfo,
+                        event.target.value,
+                        'password'
+                      )
                     }
                   />
                   {userInfoError.password && (
@@ -414,7 +409,12 @@ const SignUp = () => {
                     label="비밀번호 확인"
                     value={userInfo.passwordCheck}
                     onChange={(event) =>
-                      onChangeInput(event.target.value, 'passwordCheck')
+                      onChangeInput(
+                        userInfo,
+                        setUserInfo,
+                        event.target.value,
+                        'passwordCheck'
+                      )
                     }
                   />
                   {userInfoError.passwordCheck && (
@@ -433,7 +433,12 @@ const SignUp = () => {
                         label="이메일"
                         value={userInfo.email}
                         onChange={(event) =>
-                          onChangeInput(event.target.value, 'email')
+                          onChangeInput(
+                            userInfo,
+                            setUserInfo,
+                            event.target.value,
+                            'email'
+                          )
                         }
                       />
                       {userInfoError.email && (
@@ -460,7 +465,12 @@ const SignUp = () => {
                     label="이름"
                     value={userInfo.name}
                     onChange={(event) =>
-                      onChangeInput(event.target.value, 'name')
+                      onChangeInput(
+                        userInfo,
+                        setUserInfo,
+                        event.target.value,
+                        'name'
+                      )
                     }
                   />
                   {userInfoError.name && (
@@ -475,7 +485,12 @@ const SignUp = () => {
                     label="나이"
                     value={userInfo.birth}
                     onChange={(event) =>
-                      onChangeInput(event.target.value, 'birth')
+                      onChangeInput(
+                        userInfo,
+                        setUserInfo,
+                        event.target.value,
+                        'birth'
+                      )
                     }
                   />
                   {userInfoError.birth && (
@@ -496,7 +511,14 @@ const SignUp = () => {
                     options={Gender}
                     placeholder="성별"
                     value={userInfo.gender}
-                    setValue={(value) => onChangeInput(value ?? '', 'gender')}
+                    setValue={(value) =>
+                      onChangeInput(
+                        userInfo,
+                        setUserInfo,
+                        value ?? '',
+                        'gender'
+                      )
+                    }
                   />
                   {userInfoError.gender && (
                     <span className="text-[11px] text-red-400 px-2">
@@ -541,7 +563,14 @@ const SignUp = () => {
               <Input
                 label="인증번호"
                 value={userInfo.code}
-                onChange={(event) => onChangeInput(event.target.value, 'code')}
+                onChange={(event) =>
+                  onChangeInput(
+                    userInfo,
+                    setUserInfo,
+                    event.target.value,
+                    'code'
+                  )
+                }
               />
               <span className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[14px] text-red-600 font-medium">
                 {String(minutes).padStart(2, '0')}:

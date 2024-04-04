@@ -9,18 +9,18 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    // <QueryClientProvider client={queryClient}>
-    <ThemeProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<Home />} path="/" />
-          <Route element={<SignIn />} path="/sign-in" />
-          <Route element={<SignUp />} path="/sign-up" />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
-    //<ReactQueryDevtools initialIsOpen={false} />
-    //</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<Home />} path="/" />
+            <Route element={<SignIn />} path="/sign-in" />
+            <Route element={<SignUp />} path="/sign-up" />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 

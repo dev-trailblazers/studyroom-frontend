@@ -5,6 +5,7 @@ import { Button, Input } from '../../../components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { checkEmptyInputAndFocus, onChangeInput } from '../../../utils';
 
 interface UserInfo {
   username: string;
@@ -50,17 +51,10 @@ const SignIn = () => {
     }
   };
 
-  // Input들의 onChange 함수 (value: 입력한 값, field: 객체 키)
-  const onChangeInput = (value: string, field: string) => {
-    const updatedObject = { ...userInfo };
-    updatedObject[field] = value;
-    setUserInfo(updatedObject);
-  };
-
   // 일반 로그인
   const onSignIn = async () => {
     try {
-      if (checkEmptyInputAndFocus()) {
+      if (checkEmptyInputAndFocus(userInfo, setUserInfoError)) {
         return;
       }
 
@@ -88,6 +82,7 @@ const SignIn = () => {
 
       // refresh token은 나중에 진행
       const accessToken = response.headers.get('Authorization')?.split(' ')[1];
+
       if (accessToken) {
         setCookie('accessToken', accessToken, {
           maxAge: 60 * 60 * 10,
@@ -106,21 +101,9 @@ const SignIn = () => {
     }
   };
 
-  // TODO 카카오 로그인 - 서버가 쿠키에 access token을 저장(만료 시 로그인 페이지로 이동)
+  // 카카오 로그인
   const onSignInKakao = async () => {
     window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
-  };
-
-  // 입력되지 않은 Input이 있을 시, 에러 문구 렌더링 및 focus 이동
-  const checkEmptyInputAndFocus = () => {
-    for (const [field, value] of Object.entries(userInfo)) {
-      if (value.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, [field]: true }));
-        document.getElementById(field)?.focus();
-        return true;
-      }
-    }
-    return false;
   };
 
   return (
@@ -153,7 +136,12 @@ const SignIn = () => {
                   label="아이디"
                   value={userInfo.username}
                   onChange={(event) =>
-                    onChangeInput(event.target.value, 'username')
+                    onChangeInput(
+                      userInfo,
+                      setUserInfo,
+                      event.target.value,
+                      'username'
+                    )
                   }
                 />
                 {userInfoError.username && (
@@ -168,7 +156,12 @@ const SignIn = () => {
                   label="비밀번호"
                   value={userInfo.password}
                   onChange={(event) =>
-                    onChangeInput(event.target.value, 'password')
+                    onChangeInput(
+                      userInfo,
+                      setUserInfo,
+                      event.target.value,
+                      'password'
+                    )
                   }
                 />
                 {userInfoError.password && (
