@@ -8,7 +8,7 @@ import { Gender } from '../../../data/Gender';
 import Logo from '../../../assets/logo.png';
 
 import { useTimer } from 'react-timer-hook';
-import { checkEmptyInputAndFocus, onChangeInput } from '../../../utils';
+import { checkEmptyObjectInput, onChangeObjectInput } from '../../../utils';
 
 interface UserInfo extends SignUp {
   passwordCheck: string;
@@ -281,7 +281,7 @@ const SignUp = () => {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (checkEmptyInputAndFocus(userInfo, setUserInfoError)) {
+      if (checkEmptyObjectInput(userInfo, setUserInfoError)) {
         return;
       }
 
@@ -355,7 +355,7 @@ const SignUp = () => {
                         label="아이디"
                         value={userInfo.username}
                         onChange={(event) =>
-                          onChangeInput(
+                          onChangeObjectInput(
                             userInfo,
                             setUserInfo,
                             event.target.value,
@@ -387,7 +387,7 @@ const SignUp = () => {
                     label="비밀번호"
                     value={userInfo.password}
                     onChange={(event) =>
-                      onChangeInput(
+                      onChangeObjectInput(
                         userInfo,
                         setUserInfo,
                         event.target.value,
@@ -409,7 +409,7 @@ const SignUp = () => {
                     label="비밀번호 확인"
                     value={userInfo.passwordCheck}
                     onChange={(event) =>
-                      onChangeInput(
+                      onChangeObjectInput(
                         userInfo,
                         setUserInfo,
                         event.target.value,
@@ -433,7 +433,7 @@ const SignUp = () => {
                         label="이메일"
                         value={userInfo.email}
                         onChange={(event) =>
-                          onChangeInput(
+                          onChangeObjectInput(
                             userInfo,
                             setUserInfo,
                             event.target.value,
@@ -465,7 +465,7 @@ const SignUp = () => {
                     label="이름"
                     value={userInfo.name}
                     onChange={(event) =>
-                      onChangeInput(
+                      onChangeObjectInput(
                         userInfo,
                         setUserInfo,
                         event.target.value,
@@ -485,7 +485,7 @@ const SignUp = () => {
                     label="나이"
                     value={userInfo.birth}
                     onChange={(event) =>
-                      onChangeInput(
+                      onChangeObjectInput(
                         userInfo,
                         setUserInfo,
                         event.target.value,
@@ -504,7 +504,7 @@ const SignUp = () => {
                 options={Education}
                 placeholder="학력"
                 value={userInfo.education}
-                setValue={(value) => onChangeInput(value ?? '', 'education')}
+                setValue={(value) => onChangeObjectInput(value ?? '', 'education')}
               /> */}
                 <div className="w-full flex flex-col gap-1">
                   <Select
@@ -512,7 +512,7 @@ const SignUp = () => {
                     placeholder="성별"
                     value={userInfo.gender}
                     setValue={(value) =>
-                      onChangeInput(
+                      onChangeObjectInput(
                         userInfo,
                         setUserInfo,
                         value ?? '',
@@ -564,7 +564,7 @@ const SignUp = () => {
                 label="인증번호"
                 value={userInfo.code}
                 onChange={(event) =>
-                  onChangeInput(
+                  onChangeObjectInput(
                     userInfo,
                     setUserInfo,
                     event.target.value,

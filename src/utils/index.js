@@ -1,2 +1,2 @@
-export { default as checkEmptyInputAndFocus } from './checkEmptyInputAndFocus';
-export { default as onChangeInput } from './onChangeInput';
+export { default as checkEmptyObjectInput } from './checkEmptyObjectInput';
+export { default as onChangeObjectInput } from './onChangeObjectInput';

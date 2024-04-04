@@ -5,7 +5,7 @@ import { Button, Input } from '../../../components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { checkEmptyInputAndFocus, onChangeInput } from '../../../utils';
+import { checkEmptyObjectInput, onChangeObjectInput } from '../../../utils';
 
 interface UserInfo {
   username: string;
@@ -54,7 +54,7 @@ const SignIn = () => {
   // 일반 로그인
   const onSignIn = async () => {
     try {
-      if (checkEmptyInputAndFocus(userInfo, setUserInfoError)) {
+      if (checkEmptyObjectInput(userInfo, setUserInfoError)) {
         return;
       }
 
@@ -136,7 +136,7 @@ const SignIn = () => {
                   label="아이디"
                   value={userInfo.username}
                   onChange={(event) =>
-                    onChangeInput(
+                    onChangeObjectInput(
                       userInfo,
                       setUserInfo,
                       event.target.value,
@@ -156,7 +156,7 @@ const SignIn = () => {
                   label="비밀번호"
                   value={userInfo.password}
                   onChange={(event) =>
-                    onChangeInput(
+                    onChangeObjectInput(
                       userInfo,
                       setUserInfo,
                       event.target.value,
