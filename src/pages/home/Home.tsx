@@ -141,6 +141,7 @@ const Home = () => {
       isLogoutModalOpen: false,
     }));
   };
+
   const closeCreateModal = () => {
     setModals((prevModals) => ({
       ...prevModals,
