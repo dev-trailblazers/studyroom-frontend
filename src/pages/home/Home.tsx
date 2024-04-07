@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Select, Modal } from '../../components';
 import { ViewList } from '../../data/ViewList';
 import { inStudyCards } from '../../data/inStudyCards';
 import { recuritStudyCards } from '../../data/recuritStudyCards';
+import { recuritStudyModal } from '../../data/recuritStudyModal';
+import { notifications } from '../../data/Notifications';
 import { useNavigate } from 'react-router-dom';
 
 const inStudyPage = 4;
+const recuritPerPage = 12;
 
 const createStudyInfo = {
   studyTitle: '',
@@ -18,6 +21,41 @@ const createStudyInfo = {
   studyIntroduction: '',
 };
 
+const recuritStudyInfo = {
+  id: 0,
+  title: '',
+  recurit_st: '',
+  recurit_at: '',
+  studytype: '',
+  studyIntroduce: '',
+  maxParticipants: '',
+};
+
+const fetchRecruitingStudies = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/study/list/recruiting?page=0&size=10&sort=createdAt`,
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          Accept: '*/*',
+          'Access-Control-Allow-Credentials': 'true',
+          'Access-Control-Allow-Origin': 'http://localhost:5173',
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to fetch recruiting studies');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching recruiting studies:', error.message);
+    throw error;
+  }
+};
+
 const Home = () => {
   const navigate = useNavigate();
   const [headerActiveIndex, setHeaderActiveIndex] = useState(0);
@@ -25,13 +63,52 @@ const Home = () => {
     useState<boolean>(false);
   const [inStudyGroupIndex, setInStudyGroupIndex] = useState(0);
   const totalGroups = Math.ceil(inStudyCards.length / inStudyPage);
+  const [recuritPage, setRecuritPage] = useState(1);
+  const indexOfLastItem = recuritPage * recuritPerPage;
+  const indexOfFirstItem = indexOfLastItem - recuritPerPage;
+  const currentItems = recuritStudyCards.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
   const [select, setSelect] = useState('');
   const [studySearch, setStudySearch] = useState('');
   const [modals, setModals] = useState({
     isLogoutModalOpen: false,
     isCreateModalOpen: false,
+    isStudyModalOpen: false,
+    studyModalData: recuritStudyInfo,
   });
   const [createFormData, setCreateFormData] = useState(createStudyInfo);
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const accordionRef = useRef<HTMLDivElement>(null);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // 오늘 날짜 가져오는 함수
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    // 페이지가 활성화될 때 실행될 함수
+    const loadData = async () => {
+      try {
+        const recruitingStudies = await fetchRecruitingStudies();
+        console.log('Recruiting studies:', recruitingStudies);
+        // 여기서 데이터를 사용하여 UI를 업데이트하거나 처리합니다.
+      } catch (error) {
+        // 오류 처리
+        console.log(error);
+      }
+    };
+
+    // 페이지가 활성화될 때 실행될 함수 호출
+    loadData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // []를 전달하여 컴포넌트가 마운트될 때 한 번만 실행되도록 함
 
   // 모달 상태관리
   const openLogoutModal = () => {
@@ -46,6 +123,17 @@ const Home = () => {
       isCreateModalOpen: true,
     }));
   };
+  const openStudyModal = (id: number) => {
+    const studyData = recuritStudyModal.find((item) => item.id === id);
+
+    if (studyData) {
+      setModals((prevModals) => ({
+        ...prevModals,
+        isStudyModalOpen: true,
+        studyModalData: studyData,
+      }));
+    }
+  };
 
   const closeLogoutModal = () => {
     setModals((prevModals) => ({
@@ -57,6 +145,13 @@ const Home = () => {
     setModals((prevModals) => ({
       ...prevModals,
       isCreateModalOpen: false,
+    }));
+  };
+  const closeStudyModal = () => {
+    setModals((prevModals) => ({
+      ...prevModals,
+      isStudyModalOpen: false,
+      studyModalData: recuritStudyInfo,
     }));
   };
 
@@ -77,7 +172,27 @@ const Home = () => {
   // 메인 페이지 헤더 메뉴 클릭 이벤트
   const handleHeaderClick = (index: number) => {
     setHeaderActiveIndex(index);
+    setIsAccordionOpen(index === 2 ? !isAccordionOpen : false);
+    switch (index) {
+      case 0:
+        navigate('/');
+        break;
+      case 1:
+        navigate('/notice');
+        break;
+      case 3:
+        navigate('/mypage');
+        break;
+    }
   };
+
+  // 아코디언 창의 높이를 열고 닫는 효과를 적용하는 useEffect
+  useEffect(() => {
+    accordionRef.current !== null &&
+      (accordionRef.current.style.height = isAccordionOpen
+        ? `${accordionRef.current.scrollHeight}px`
+        : '0');
+  }, [isAccordionOpen]);
 
   // 참여 중인 스터디 페이지 이전 클릭
   const handlePreviousClick = () => {
@@ -90,6 +205,9 @@ const Home = () => {
       Math.min(prevIndex + 1, totalGroups - 1)
     );
   };
+
+  // 모집중인 스터디 페이지 변경 함수
+  const paginate = (pageNumber: number) => setRecuritPage(pageNumber);
 
   // (전체 / 모집중) 스터디 확인 버튼
   const onRecuritButton = () => {
@@ -152,14 +270,17 @@ const Home = () => {
         </div>
         {/* header Section */}
         <div className="flex items-center justify-between">
-          <h1 className="text-[28px] md:text-[44px] lg:text-[54px] font-semibold text-blue_01">
+          <h1
+            className="text-[28px] md:text-[44px] lg:text-[54px] cursor-pointer select-none font-semibold text-blue_01"
+            onClick={() => navigate('/')}
+          >
             StudyRoom
           </h1>
           <div className="w-[250px] h-[45px] md:w-[400px] lg:w-[500px] md:h-[50px] lg:h-[60px] flex justify-between items-center bg-blue_02 border rounded-[10px]">
             {['홈', '공지사항', '알림', '내정보'].map((label, index) => (
               <div
                 key={label}
-                className={`flex-1 flex items-center justify-center cursor-pointer font-semibold transition duration-300 transform hover:scale-105 ${
+                className={`flex-1 flex items-center justify-center cursor-pointer select-none font-semibold transition duration-300 transform hover:scale-105 ${
                   headerActiveIndex === index
                     ? 'text-blue_01 text-[14px] md:text-[18px] lg:text-[20px] font-bold'
                     : 'text-white text-[12px] md:text-[16px] lg:text-[18px]'
@@ -169,6 +290,29 @@ const Home = () => {
                 {label}
               </div>
             ))}
+            {/* Accordion */}
+            <div
+              ref={accordionRef}
+              className="absolute z-50 top-[85px] w-[250px] md:top-[100px] md:w-[400px] lg:top-[110px] lg:w-[500px] bg-white rounded-[10px] shadow-box_03 transition-all duration-300"
+              style={{
+                height: '0',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Render notifications */}
+              {notifications.map((notification, index) => (
+                <div key={index} className="p-4 border-b cursor-pointer">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[14px] font-medium">
+                      {notification.message}
+                    </span>
+                    <span className="text-[12px] text-gray-500">
+                      {notification.time}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         {/* inStudy Section*/}
@@ -211,9 +355,24 @@ const Home = () => {
               .map((element) => (
                 <div
                   key={element.id}
-                  className="flex h-[200px] lg:h-[200px] bg-white rounded-[20px] shadow-box_03 justify-center items-center"
+                  className="p-5 h-[200px] lg:h-[200px] bg-white rounded-[20px] shadow-box_03 cursor-pointer transition duration-300 transform hover:scale-105"
                 >
-                  {element.name}
+                  <div className="flex mb-3 justify-between font-semibold">
+                    <span>{element.title}</span>
+                    {+element.Day <= 5 ? (
+                      <span className="text-red-500">D-{element.Day}</span>
+                    ) : (
+                      <span>D-{element.Day}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1 text-[14px] font-semibold">
+                    <span className=" text-gray-500">공지사항</span>
+                    <span className="block text-[13px]">
+                      {element.Notice
+                        ? element.Notice
+                        : '공지된 글이 없습니다.'}
+                    </span>
+                  </div>
                 </div>
               ))}
           </div>
@@ -259,14 +418,129 @@ const Home = () => {
           </div>
           {/* recruitStudy Card Section*/}
           <div className="pt-5 pb-5 grid gap-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
-            {recuritStudyCards.map((element) => (
+            {currentItems.map((element) => (
               <div
                 key={element.id}
-                className="h-[200px] bg-white rounded-[20px] flex justify-center items-center shadow-box_03"
+                className={`p-5 bg-white rounded-[20px] shadow-box_03 transition duration-300 transform hover:scale-105 ${
+                  new Date(element.recurit_at) < currentDate
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'cursor-pointer'
+                }`}
+                onClick={() => openStudyModal(element.id)}
               >
-                {element.name}
+                {/* Card Content */}
+                <div className="flex items-center justify-between mb-1 font-semibold">
+                  <span>{element.title}</span>
+                  <span className="text-[14px]">{element.recurit_at}</span>
+                </div>
+                <div className="flex flex-col gap-7">
+                  <span className="w-fit text-[12px] text-gray-500 font-semibold">
+                    {element.studytype}
+                  </span>
+                  <span className="text-[14px] font-semibold">
+                    {element.studyIntroduce.length > 50
+                      ? `${element.studyIntroduce.slice(0, 50)}...`
+                      : element.studyIntroduce}
+                  </span>
+                  <div className="flex items-center justify-between text-[14px] font-semibold">
+                    <span>👑 {element.admin}</span>
+                    <span>👥 {element.maxParticipants}명</span>
+                  </div>
+                </div>
               </div>
             ))}
+            <Modal
+              isOpen={modals.isStudyModalOpen}
+              onClose={closeStudyModal}
+              title={modals.studyModalData.title}
+              width={500}
+              height={600}
+              closeOnBackdropClick={false}
+              exitIcon={true}
+              animation={true}
+            >
+              <div className="grid grid-cols-2 gap-5">
+                <div className="flex items-center gap-5 text-[18px] font-medium">
+                  <span className="text-main">스터디 종류</span>
+                  <span className="font-semibold text-[15px]">
+                    {modals.studyModalData.studytype}
+                  </span>
+                </div>
+                <div className="flex items-center gap-5 text-[18px] font-medium">
+                  <span className="text-main">스터디 인원</span>
+                  <span className="font-semibold text-[15px]">
+                    {modals.studyModalData.maxParticipants}
+                  </span>
+                </div>
+                <div className="flex items-center gap-5 text-[18px] font-medium">
+                  <span className="text-main">스터디 시작</span>
+                  <span className="font-semibold text-[15px]">
+                    {modals.studyModalData.recurit_st}
+                  </span>
+                </div>
+                <div className="flex items-center gap-5 text-[18px] font-medium">
+                  <span className="text-main ">스터디 종료</span>
+                  <span className="font-semibold text-[15px]">
+                    {modals.studyModalData.recurit_at}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1 h-[340px] col-span-2 text-[18px] font-medium">
+                  <span className="text-main">스터디 소개</span>
+                  <span className="block font-semibold text-[15px]">
+                    {modals.studyModalData.studyIntroduce}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <Button
+                  text="닫기"
+                  blueType="light"
+                  onClick={closeStudyModal}
+                  className="text-[14px] h-[47px] mr-2"
+                />
+                <Button
+                  text="신청"
+                  blueType="dark"
+                  onClick={() => {
+                    alert('준비중');
+                    return;
+                  }}
+                  className="text-[14px] h-[47px] ml-2"
+                />
+              </div>
+            </Modal>
+          </div>
+          {/* Pagination Button */}
+          <div className="flex justify-center mt-4">
+            <button
+              className="mx-1 px-3 py-1"
+              onClick={() => paginate(recuritPage - 1)}
+              disabled={recuritPage === 1}
+            >
+              &lt;
+            </button>
+            {Array.from(
+              { length: Math.ceil(recuritStudyCards.length / recuritPerPage) },
+              (_, i) => (
+                <button
+                  key={i}
+                  className={`mx-1 px-3 py-1 rounded-lg ${recuritPage === i + 1 ? 'bg-main text-white shadow-box_03' : 'bg-white shadow-box_01'}`}
+                  onClick={() => paginate(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+            <button
+              className="mx-1 px-3 py-1"
+              onClick={() => paginate(recuritPage + 1)}
+              disabled={
+                recuritPage ===
+                Math.ceil(recuritStudyCards.length / recuritPerPage)
+              }
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>
