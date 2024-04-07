@@ -1,12 +1,33 @@
 export const inStudyCards = [
-  { id: 1, name: 'Element 1' },
-  { id: 2, name: 'Element 2' },
-  { id: 3, name: 'Element 3' },
-  { id: 4, name: 'Element 4' },
-  { id: 5, name: 'Element 5' },
-  { id: 6, name: 'Element 6' },
-  { id: 7, name: 'Element 7' },
-  { id: 8, name: 'Element 8' },
-  { id: 9, name: 'Element 9' },
-  { id: 10, name: 'Element 10' },
+  {
+    id: 1,
+    title: '영어 스터디',
+    Day: '5',
+    Notice:
+      '오늘의 스터디 예정 사항입니다. 필히 확인 하시고 스터디 활동간에 차질이 없도록 해주시길 바랍니다.',
+  },
+  {
+    id: 2,
+    title: '수학 스터디',
+    Day: '10',
+    Notice: '',
+  },
+  {
+    id: 3,
+    title: '과학 스터디',
+    Day: '11',
+    Notice: '오늘의 스터디 예정 사항입니다.',
+  },
+  {
+    id: 4,
+    title: '사회 스터디',
+    Day: '5',
+    Notice: '오늘의 스터디 예정 사항입니다.',
+  },
+  {
+    id: 5,
+    title: 'IT 스터디',
+    Day: '5',
+    Notice: '오늘의 스터디 예정 사항입니다.',
+  },
 ];

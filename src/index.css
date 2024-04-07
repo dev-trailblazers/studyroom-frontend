@@ -52,3 +52,17 @@ img {
   /* 실험적 속성이라서 firefox에서는 사용되지 않고 일반적인 다른 브라우저에서 동작하게 만들려면(대표적으로 크롬 브라우저에서 동작하게 만들려면) 웹킷이라는 공급업체 접두사를 추가해야만 작동함 */
   -webkit-user-drag: none;
 }
+
+/* 모달 애니메이션 스타일 */
+@keyframes slide-down {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s ease-out;
+}

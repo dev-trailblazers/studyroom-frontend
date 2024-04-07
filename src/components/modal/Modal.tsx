@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ModalProps {
   isOpen: boolean; // 모달 열림 여부
@@ -9,6 +9,7 @@ interface ModalProps {
   height?: number; // 높이 옵셔널 기본값 100
   closeOnBackdropClick?: boolean; // 백드롭 클릭시 모달 닫을지 안 닫을지 여부 기본값 true
   exitIcon?: boolean; // 닫기 버튼 표시 할지 안 할지 여부 기본값 true
+  animation?: boolean; // 모달 애니메이션 여부 기본값 false
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -20,19 +21,23 @@ const Modal: React.FC<ModalProps> = ({
   height = 100,
   closeOnBackdropClick = true,
   exitIcon = true,
+  animation = false,
 }) => {
+  const [animationClass, setAnimationClass] = useState('');
+
   useEffect(() => {
-    // useEffect 사용하여 isOpen 값 바뀔때 마다 실행 모달 열려있을시 백그라운드 스크롤 없애서 조작 불가능 하도록 하는 부분
-    if (isOpen) {
+    if (isOpen && animation) {
+      setAnimationClass('animate-slide-down');
       document.body.style.overflow = 'hidden';
     } else {
+      setAnimationClass('');
       document.body.style.overflow = '';
     }
 
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, animation]);
 
   const handleClick = () => {
     if (closeOnBackdropClick) {
@@ -43,15 +48,14 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <>
       {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          onClick={handleClick}
-        >
-          <div className="fixed inset-0 bg-black opacity-50 shadow-box_03"></div>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center`}>
           <div
-            className={`relative bg-white rounded-lg p-6`}
-            style={{ width: width, height: height }}
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black opacity-50 shadow-box_03"
+            onClick={handleClick}
+          ></div>
+          <div
+            className={`relative bg-white rounded-lg p-6 ${animationClass}`}
+            style={{ width, height }}
           >
             <div className="flex justify-between items-center mb-4 border-b border-gray-400 pb-2">
               <h2 className="text-main text-lg font-semibold">{title}</h2>
