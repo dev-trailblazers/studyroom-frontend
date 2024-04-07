@@ -1,7 +1,7 @@
 const onChangeObjectInput = (
-  object: { [key: string]: string },
+  object: { [key: string]: string | number | boolean },
   setObject: (value: any) => void,
-  value: string,
+  value: string | number | boolean,
   field: string
 ) => {
   const updatedObject = { ...object };
