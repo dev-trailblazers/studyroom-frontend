@@ -28,6 +28,10 @@ export default withMT({
         box_02: '0 2px 5px rgba(0, 0, 0, 0.1)',
         box_03: '1px 1px 10px rgba(0, 0, 0, 0.25)',
       },
+      screens: {
+        lg_max: { max: '1000px' },
+        sm_max: { max: '780px' },
+      },
     },
   },
   plugins: [],
