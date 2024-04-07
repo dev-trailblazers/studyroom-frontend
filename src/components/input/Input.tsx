@@ -1,6 +1,7 @@
 import { Input as CustomInput } from '@material-tailwind/react';
 
 interface InputProps {
+  id?: string;
   type?: string;
   label: string;
   value: string;
@@ -11,6 +12,7 @@ interface InputProps {
 }
 
 const Input = ({
+  id,
   type = 'text',
   label,
   value,
@@ -21,6 +23,7 @@ const Input = ({
 }: InputProps) => {
   return (
     <CustomInput
+      id={id}
       data-value={value ? 'true' : 'false'}
       label={label}
       value={value}
