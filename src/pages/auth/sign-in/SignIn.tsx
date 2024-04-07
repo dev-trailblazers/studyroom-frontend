@@ -103,7 +103,7 @@ const SignIn = () => {
 
   // 카카오 로그인
   const onSignInKakao = async () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/kakao';
+    window.location.href = import.meta.env.REACT_APP_KAKAO_AUTH_URL;
   };
 
   return (

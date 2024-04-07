@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
 
 import { Button, Input, Modal, Select } from '../../../components';
 import { Gender } from '../../../data/Gender';
