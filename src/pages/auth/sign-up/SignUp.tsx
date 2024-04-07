@@ -76,9 +76,10 @@ const SignUp = () => {
     useState<UserInfoError>(initialUserInfoError);
 
   const [isDuplicated, setIsDuplicated] = useState<boolean | null>(null);
+
   const [isCertifing, setIsCertifing] = useState(false);
 
-  // 인증번호 입력 모달
+  // 인증번호 입력 모달뮬
   const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
   useEffect(() => {
@@ -289,7 +290,7 @@ const SignUp = () => {
         return;
       }
 
-      if (isDuplicated) {
+      if (isDuplicated || isDuplicated === null) {
         alert('아이디 중복 확인 과정을 진행해 주세요.');
         return;
       }
