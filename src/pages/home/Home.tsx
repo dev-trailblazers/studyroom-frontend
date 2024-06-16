@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Select, Modal } from '../../components';
-import { ViewList } from '../../data/ViewList';
-import { inStudyCards } from '../../data/inStudyCards';
-import { recuritStudyCards } from '../../data/recuritStudyCards';
-import { recuritStudyModal } from '../../data/recuritStudyModal';
-import { notifications } from '../../data/Notifications';
+import {
+  ViewList,
+  inStudyCards,
+  recuritStudyCards,
+  recuritStudyModal,
+  notifications,
+} from '../../data';
 import { useNavigate } from 'react-router-dom';
 
-const inStudyPage = 4;
-const recuritPerPage = 12;
+const IN_STUDY_PAGE = 4;
+const RECURIT_PER_PAGE = 12;
 
 const createStudyInfo = {
   studyTitle: '',
@@ -62,10 +64,10 @@ const Home = () => {
   const [recuritButtonActive, setRecuritButtonActive] =
     useState<boolean>(false);
   const [inStudyGroupIndex, setInStudyGroupIndex] = useState(0);
-  const totalGroups = Math.ceil(inStudyCards.length / inStudyPage);
+  const totalGroups = Math.ceil(inStudyCards.length / IN_STUDY_PAGE);
   const [recuritPage, setRecuritPage] = useState(1);
-  const indexOfLastItem = recuritPage * recuritPerPage;
-  const indexOfFirstItem = indexOfLastItem - recuritPerPage;
+  const indexOfLastItem = recuritPage * RECURIT_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - RECURIT_PER_PAGE;
   const currentItems = recuritStudyCards.slice(
     indexOfFirstItem,
     indexOfLastItem
@@ -227,16 +229,29 @@ const Home = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const onSignOut = async () => {
+    try {
+      const kakaoApiKey = 'e5b137659ae5199867ec2adb0343cec6';
+      const response = await fetch(
+        'https://kauth.kakao.com/oauth/logout' +
+          'client_id=' +
+          kakaoApiKey +
+          '&logout_redirect_uri=http://localhost:8080/logout'
+      );
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen pt-10 pl-10 pr-[50px] lg:pl-20 lg:pr-[90px] flex flex-col gap-10">
         {/* logout Section */}
         <div className="flex absolute top-0 right-4 lg:right-14 pt-4 pr-5">
           <span className="text-[12px] text-gray-400">엄현호님ㅤ|ㅤ</span>
-          <button
-            className="text-[12px] text-gray-400"
-            onClick={openLogoutModal}
-          >
+          <button className="text-[12px] text-gray-400" onClick={onSignOut}>
             로그아웃
           </button>
           <Modal
@@ -350,8 +365,8 @@ const Home = () => {
           <div className="pt-5 pb-5 grid gap-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
             {inStudyCards
               .slice(
-                inStudyGroupIndex * inStudyPage,
-                (inStudyGroupIndex + 1) * inStudyPage
+                inStudyGroupIndex * IN_STUDY_PAGE,
+                (inStudyGroupIndex + 1) * IN_STUDY_PAGE
               )
               .map((element) => (
                 <div
@@ -521,7 +536,9 @@ const Home = () => {
               &lt;
             </button>
             {Array.from(
-              { length: Math.ceil(recuritStudyCards.length / recuritPerPage) },
+              {
+                length: Math.ceil(recuritStudyCards.length / RECURIT_PER_PAGE),
+              },
               (_, i) => (
                 <button
                   key={i}
@@ -537,7 +554,7 @@ const Home = () => {
               onClick={() => paginate(recuritPage + 1)}
               disabled={
                 recuritPage ===
-                Math.ceil(recuritStudyCards.length / recuritPerPage)
+                Math.ceil(recuritStudyCards.length / RECURIT_PER_PAGE)
               }
             >
               &gt;

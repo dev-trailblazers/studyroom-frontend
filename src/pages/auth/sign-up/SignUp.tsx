@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Input, Modal, Select } from '../../../components';
-import { Gender } from '../../../data/Gender';
+import { Gender } from '../../../data';
 
 import Logo from '../../../assets/logo.png';
 
@@ -45,7 +45,6 @@ const initialUserInfo = {
   birth: '',
   gender: '',
   code: '',
-  // education: '',
 };
 
 const initialUserInfoError = {
@@ -63,6 +62,7 @@ const initialUserInfoError = {
 const SignUp = () => {
   const navigate = useNavigate();
 
+  // 인증번호 유효시간을 위한 TIME
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 300);
   const { seconds, minutes, pause, restart } = useTimer({
@@ -79,7 +79,7 @@ const SignUp = () => {
 
   const [isCertifing, setIsCertifing] = useState(false);
 
-  // 인증번호 입력 모달뮬
+  // 인증번호 입력 모달 ON/OFF
   const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
   useEffect(() => {

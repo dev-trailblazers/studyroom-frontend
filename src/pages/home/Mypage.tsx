@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Select, Modal } from '../../components';
 import { useNavigate } from 'react-router-dom';
-import { notifications } from '../../data/Notifications';
+import { notifications } from '../../data';
 
 const createStudyInfo = {
   studyTitle: '',
