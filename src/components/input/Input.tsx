@@ -4,7 +4,7 @@ interface InputProps {
   id?: string;
   type?: string;
   label: string;
-  value: string;
+  value: string | number;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   disabled?: boolean;

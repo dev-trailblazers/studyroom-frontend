@@ -2,14 +2,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { Home, Notice, Mypage, SignIn, SignUp } from './pages';
 import { ThemeProvider } from '@material-tailwind/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-const queryClient = new QueryClient();
+import { CookiesProvider } from 'react-cookie';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <CookiesProvider>
       <ThemeProvider>
         <BrowserRouter>
           <Routes>
@@ -21,8 +18,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </CookiesProvider>
   );
 }
 

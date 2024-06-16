@@ -1,114 +1,181 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Select, Modal } from '../../components';
 import { ViewList } from '../../data/ViewList';
-import { inStudyCards } from '../../data/inStudyCards';
-import { recuritStudyCards } from '../../data/recuritStudyCards';
-import { recuritStudyModal } from '../../data/recuritStudyModal';
 import { notifications } from '../../data/Notifications';
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
 const inStudyPage = 4;
 const recuritPerPage = 12;
 
 const createStudyInfo = {
-  studyTitle: '',
-  studyType: '',
+  name: '',
+  type: '',
   startDate: '',
   endDate: '',
-  studyMethod: '',
-  maxParticipants: '',
-  recruitmentType: '',
-  studyIntroduction: '',
+  headcount: '',
+  introduction: '',
+  isRecruit: '',
 };
 
-const recuritStudyInfo = {
-  id: 0,
-  title: '',
-  recurit_st: '',
-  recurit_at: '',
-  studytype: '',
-  studyIntroduce: '',
-  maxParticipants: '',
-};
+interface inStudy {
+  endDate: string;
+  id: number;
+  name: string;
+  noticeArticle: string;
+  noticeId: number;
+  type: string;
+}
 
-const fetchRecruitingStudies = async () => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/study/list/recruiting?page=0&size=10&sort=createdAt`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Accept: '*/*',
-          'Access-Control-Allow-Credentials': 'true',
-          'Access-Control-Allow-Origin': 'http://localhost:5173',
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch recruiting studies');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    console.error('Error fetching recruiting studies:', error.message);
-    throw error;
-  }
+interface recruitStudy {
+  totalCount: number;
+  startDate: string;
+  headcount: number;
+  introduction: string;
+  id: number;
+  name: string;
+  type: string;
+  leaderName: string;
+}
+
+interface recruitStudyModal {
+  id: number;
+  name: string;
+  type: string;
+  startDate: string;
+  endDate: string;
+  headcount: number;
+  introduction: string;
+  isRecruit: boolean;
+}
+
+interface modal {
+  isLogoutModalOpen: boolean;
+  isCreateModalOpen: boolean;
+  isStudyModalOpen: boolean;
+  studyModalData: recruitStudyModal | null;
+}
+
+const modalInfo = {
+  isLogoutModalOpen: false,
+  isCreateModalOpen: false,
+  isStudyModalOpen: false,
+  studyModalData: null,
 };
 
 const Home = () => {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
   const [headerActiveIndex, setHeaderActiveIndex] = useState(0);
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  const accordionRef = useRef<HTMLDivElement>(null);
+
+  const [inStudies, setInStudies] = useState<inStudy[]>([]);
+  const [inStudyGroupIndex, setInStudyGroupIndex] = useState(0);
+  const totalGroups = Math.ceil(inStudies.length / inStudyPage);
+
   const [recuritButtonActive, setRecuritButtonActive] =
     useState<boolean>(false);
-  const [inStudyGroupIndex, setInStudyGroupIndex] = useState(0);
-  const totalGroups = Math.ceil(inStudyCards.length / inStudyPage);
+  const [recruitingStudies, setRecruitingStudies] = useState<recruitStudy[]>(
+    []
+  );
   const [recuritPage, setRecuritPage] = useState(1);
   const indexOfLastItem = recuritPage * recuritPerPage;
   const indexOfFirstItem = indexOfLastItem - recuritPerPage;
-  const currentItems = recuritStudyCards.slice(
+  const currentItems = recruitingStudies.slice(
     indexOfFirstItem,
     indexOfLastItem
   );
+
   const [select, setSelect] = useState('');
   const [studySearch, setStudySearch] = useState('');
-  const [modals, setModals] = useState({
-    isLogoutModalOpen: false,
-    isCreateModalOpen: false,
-    isStudyModalOpen: false,
-    studyModalData: recuritStudyInfo,
-  });
+  const [modals, setModals] = useState<modal>(modalInfo);
   const [createFormData, setCreateFormData] = useState(createStudyInfo);
-  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const accordionRef = useRef<HTMLDivElement>(null);
+
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [cookies, setCookie, removeCookie] = useCookies(['accesstoken']);
 
-  // 오늘 날짜 가져오는 함수
+  // 토큰 가져와서 디코드 하는 함수
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    // 페이지가 활성화될 때 실행될 함수
-    const loadData = async () => {
-      try {
-        const recruitingStudies = await fetchRecruitingStudies();
-        console.log('Recruiting studies:', recruitingStudies);
-        // 여기서 데이터를 사용하여 UI를 업데이트하거나 처리합니다.
-      } catch (error) {
-        // 오류 처리
-        console.log(error);
+    const checkAuthentication = () => {
+      const token = cookies.accesstoken;
+      if (token) {
+        try {
+          const payload = token.split('.')[1]; // payload 부분만 추출
+          const decodingInfo = JSON.parse(
+            decodeURIComponent(escape(atob(payload)))
+          ); // URL 디코딩 후 JSON 형식으로 파싱 이렇게 해야지 한글이 안 깨짐
+          setUserName(decodingInfo.name);
+        } catch (error: any) {
+          console.error('Error decoding token:', error.message);
+        }
+      } else {
+        console.log('No access token found in cookies');
       }
     };
 
-    // 페이지가 활성화될 때 실행될 함수 호출
-    loadData();
+    checkAuthentication();
+  }, [cookies.accesstoken]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // []를 전달하여 컴포넌트가 마운트될 때 한 번만 실행되도록 함
+  // 오늘 날짜 가져오기
+  useEffect(() => {
+    setCurrentDate(new Date());
+  }, []);
+
+  // 참여중 스터디 데이터 요청 및 상태 업데이트
+  useEffect(() => {
+    const inStudies = async () => {
+      try {
+        const response = await fetch('/api/study/list/participation?size=5', {
+          method: 'GET',
+          headers: {
+            // Authorization: `Bearer ${cookies.accesstoken}`, 이제 없어도 됨.
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch recruiting studies');
+        }
+        const data = await response.json();
+        setInStudies(data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        console.error('Error fetching recruiting studies:', error.message);
+      }
+    };
+
+    inStudies();
+  }, []);
+
+  // 모집중 스터디 데이터 요청 및 상태 업데이트
+  useEffect(() => {
+    const recruitingStudies = async () => {
+      try {
+        const response = await fetch(
+          '/api/study/list/recruiting?size=21&sort=startDate,desc'
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch recruiting studies');
+        }
+        const data = await response.json();
+        setRecruitingStudies(data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        console.error('Error fetching recruiting studies:', error.message);
+      }
+    };
+
+    recruitingStudies();
+  }, []);
+
+  // 아코디언 창의 높이를 열고 닫는 효과를 적용하는 useEffect
+  useEffect(() => {
+    accordionRef.current !== null &&
+      (accordionRef.current.style.height = isAccordionOpen
+        ? `${accordionRef.current.scrollHeight}px`
+        : '0');
+  }, [isAccordionOpen]);
 
   // 모달 상태관리
   const openLogoutModal = () => {
@@ -123,15 +190,25 @@ const Home = () => {
       isCreateModalOpen: true,
     }));
   };
-  const openStudyModal = (id: number) => {
-    const studyData = recuritStudyModal.find((item) => item.id === id);
+  const openStudyModal = async (studyid: number) => {
+    try {
+      const response = await fetch(`/api/study/detail/${studyid}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch recruiting studies modal data');
+      }
+      const studyData: recruitStudyModal = await response.json();
 
-    if (studyData) {
       setModals((prevModals) => ({
         ...prevModals,
         isStudyModalOpen: true,
         studyModalData: studyData,
       }));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error(
+        'Error fetching recruiting studies modal data:',
+        error.message
+      );
     }
   };
 
@@ -141,7 +218,6 @@ const Home = () => {
       isLogoutModalOpen: false,
     }));
   };
-
   const closeCreateModal = () => {
     setModals((prevModals) => ({
       ...prevModals,
@@ -152,7 +228,7 @@ const Home = () => {
     setModals((prevModals) => ({
       ...prevModals,
       isStudyModalOpen: false,
-      studyModalData: recuritStudyInfo,
+      studyModalData: null,
     }));
   };
 
@@ -165,9 +241,31 @@ const Home = () => {
   };
 
   // 스터디 생성 함수
-  const handleCreateSubmit = () => {
-    console.log('Form Data:', createFormData);
-    closeCreateModal();
+  const handleCreateSubmit = async () => {
+    const headcountNumber = parseInt(createFormData.headcount);
+    const isRecruitBoolean = createFormData.isRecruit === 'On';
+
+    const formData = {
+      ...createFormData,
+      headcount: headcountNumber,
+      isRecruit: isRecruitBoolean,
+    };
+
+    try {
+      const response = await fetch('/api/study/new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('Response:', await response.json());
+
+      closeCreateModal();
+    } catch (error) {
+      console.error('Error creating study:', error);
+    }
   };
 
   // 메인 페이지 헤더 메뉴 클릭 이벤트
@@ -186,14 +284,6 @@ const Home = () => {
         break;
     }
   };
-
-  // 아코디언 창의 높이를 열고 닫는 효과를 적용하는 useEffect
-  useEffect(() => {
-    accordionRef.current !== null &&
-      (accordionRef.current.style.height = isAccordionOpen
-        ? `${accordionRef.current.scrollHeight}px`
-        : '0');
-  }, [isAccordionOpen]);
 
   // 참여 중인 스터디 페이지 이전 클릭
   const handlePreviousClick = () => {
@@ -232,7 +322,7 @@ const Home = () => {
       <div className="min-h-screen pt-10 pl-10 pr-[50px] lg:pl-20 lg:pr-[90px] flex flex-col gap-10">
         {/* logout Section */}
         <div className="flex absolute top-0 right-4 lg:right-14 pt-4 pr-5">
-          <span className="text-[12px] text-gray-400">엄현호님ㅤ|ㅤ</span>
+          <span className="text-[12px] text-gray-400">{userName}님ㅤ|ㅤ</span>
           <button
             className="text-[12px] text-gray-400"
             onClick={openLogoutModal}
@@ -348,34 +438,55 @@ const Home = () => {
           </div>
           {/* inStudy Card Section */}
           <div className="pt-5 pb-5 grid gap-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
-            {inStudyCards
-              .slice(
-                inStudyGroupIndex * inStudyPage,
-                (inStudyGroupIndex + 1) * inStudyPage
-              )
-              .map((element) => (
-                <div
-                  key={element.id}
-                  className="p-5 h-[200px] lg:h-[200px] bg-white rounded-[20px] shadow-box_03 cursor-pointer transition duration-300 transform hover:scale-105"
-                >
-                  <div className="flex mb-3 justify-between font-semibold">
-                    <span>{element.title}</span>
-                    {+element.Day <= 5 ? (
-                      <span className="text-red-500">D-{element.Day}</span>
-                    ) : (
-                      <span>D-{element.Day}</span>
-                    )}
+            {inStudies.length === 0 ? (
+              <div className="col-span-4 w-full flex items-center justify-center">
+                <span className="text-[28px] text-center text-white">
+                  현재 참여 중인 스터디가 없습니다. <br />
+                  다양한 스터디에 참가 해보세요 !
+                </span>
+              </div>
+            ) : (
+              inStudies
+                .slice(
+                  inStudyGroupIndex * inStudyPage,
+                  (inStudyGroupIndex + 1) * inStudyPage
+                )
+                .map((element) => (
+                  <div
+                    key={element.id}
+                    className="p-5 h-[200px] lg:h-[200px] bg-white rounded-[20px] shadow-box_03 cursor-pointer transition duration-300 transform hover:scale-105"
+                  >
+                    <div className="flex mb-3 justify-between font-semibold">
+                      <span>{element.name}</span>
+                      {+element.endDate <= 5 ? (
+                        <span className="text-red-500">
+                          D-
+                          {Math.ceil(
+                            (+new Date(element.endDate) - +currentDate) /
+                              (1000 * 60 * 60 * 24)
+                          )}
+                        </span>
+                      ) : (
+                        <span>
+                          D-
+                          {Math.ceil(
+                            (+new Date(element.endDate) - +currentDate) /
+                              (1000 * 60 * 60 * 24)
+                          )}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1 text-[14px] font-semibold">
+                      <span className=" text-gray-500">공지사항</span>
+                      <span className="block text-[13px]">
+                        {element.noticeArticle
+                          ? element.noticeArticle
+                          : '공지된 글이 없습니다.'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1 text-[14px] font-semibold">
-                    <span className=" text-gray-500">공지사항</span>
-                    <span className="block text-[13px]">
-                      {element.Notice
-                        ? element.Notice
-                        : '공지된 글이 없습니다.'}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))
+            )}
           </div>
         </div>
         {/* recruitStudy Section*/}
@@ -423,7 +534,7 @@ const Home = () => {
               <div
                 key={element.id}
                 className={`p-5 bg-white rounded-[20px] shadow-box_03 transition duration-300 transform hover:scale-105 ${
-                  new Date(element.recurit_at) < currentDate
+                  new Date(element.startDate) < currentDate
                     ? 'opacity-50 cursor-not-allowed'
                     : 'cursor-pointer'
                 }`}
@@ -431,85 +542,87 @@ const Home = () => {
               >
                 {/* Card Content */}
                 <div className="flex items-center justify-between mb-1 font-semibold">
-                  <span>{element.title}</span>
-                  <span className="text-[14px]">{element.recurit_at}</span>
+                  <span className="truncate text-sm">{element.name}</span>
+                  <span className="text-[14px]">{element.startDate}</span>
                 </div>
                 <div className="flex flex-col gap-7">
                   <span className="w-fit text-[12px] text-gray-500 font-semibold">
-                    {element.studytype}
+                    {element.type}
                   </span>
-                  <span className="text-[14px] font-semibold">
-                    {element.studyIntroduce.length > 50
-                      ? `${element.studyIntroduce.slice(0, 50)}...`
-                      : element.studyIntroduce}
+                  <span className="text-[14px] min-h-[42px] font-semibold">
+                    {element.introduction.length > 40
+                      ? `${element.introduction.slice(0, 40)}...`
+                      : element.introduction}
                   </span>
                   <div className="flex items-center justify-between text-[14px] font-semibold">
-                    <span>👑 {element.admin}</span>
-                    <span>👥 {element.maxParticipants}명</span>
+                    <span>👑 {element.leaderName}</span>
+                    <span>👥 {element.headcount}명</span>
                   </div>
                 </div>
               </div>
             ))}
-            <Modal
-              isOpen={modals.isStudyModalOpen}
-              onClose={closeStudyModal}
-              title={modals.studyModalData.title}
-              width={500}
-              height={600}
-              closeOnBackdropClick={false}
-              exitIcon={true}
-              animation={true}
-            >
-              <div className="grid grid-cols-2 gap-5">
-                <div className="flex items-center gap-5 text-[18px] font-medium">
-                  <span className="text-main">스터디 종류</span>
-                  <span className="font-semibold text-[15px]">
-                    {modals.studyModalData.studytype}
-                  </span>
+            {modals.studyModalData ? (
+              <Modal
+                isOpen={modals.isStudyModalOpen}
+                onClose={closeStudyModal}
+                title={modals.studyModalData.name}
+                width={500}
+                height={520}
+                closeOnBackdropClick={false}
+                exitIcon={true}
+                animation={true}
+              >
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="flex items-center gap-5 text-[18px] font-medium">
+                    <span className="text-main">스터디 종류</span>
+                    <span className="turncate text-sm font-semibold text-[15px]">
+                      {modals.studyModalData.type}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-5 text-[18px] font-medium">
+                    <span className="text-main">스터디 인원</span>
+                    <span className="font-semibold text-[15px]">
+                      {modals.studyModalData.headcount}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-5 text-[18px] font-medium">
+                    <span className="text-main">스터디 시작</span>
+                    <span className="font-semibold text-[15px]">
+                      {modals.studyModalData.startDate}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-5 text-[18px] font-medium">
+                    <span className="text-main ">스터디 종료</span>
+                    <span className="font-semibold text-[15px]">
+                      {modals.studyModalData.endDate}
+                    </span>
+                  </div>
+                  <div className="flex flex-col min-h-[256px] gap-1 col-span-2 text-[18px] font-medium">
+                    <span className="text-main">스터디 소개</span>
+                    <span className="block font-semibold text-[15px] whitespace-pre-wrap">
+                      {modals.studyModalData.introduction}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-5 text-[18px] font-medium">
-                  <span className="text-main">스터디 인원</span>
-                  <span className="font-semibold text-[15px]">
-                    {modals.studyModalData.maxParticipants}
-                  </span>
+                <div className="flex mt-5 justify-center">
+                  <Button
+                    text="닫기"
+                    blueType="light"
+                    onClick={closeStudyModal}
+                    className="text-[14px] h-[47px] mr-2"
+                  />
+                  <Button
+                    text="신청"
+                    blueType="dark"
+                    onClick={() => {
+                      alert('준비중');
+                      return;
+                    }}
+                    className="text-[14px] h-[47px] ml-2"
+                  />
                 </div>
-                <div className="flex items-center gap-5 text-[18px] font-medium">
-                  <span className="text-main">스터디 시작</span>
-                  <span className="font-semibold text-[15px]">
-                    {modals.studyModalData.recurit_st}
-                  </span>
-                </div>
-                <div className="flex items-center gap-5 text-[18px] font-medium">
-                  <span className="text-main ">스터디 종료</span>
-                  <span className="font-semibold text-[15px]">
-                    {modals.studyModalData.recurit_at}
-                  </span>
-                </div>
-                <div className="flex flex-col gap-1 h-[340px] col-span-2 text-[18px] font-medium">
-                  <span className="text-main">스터디 소개</span>
-                  <span className="block font-semibold text-[15px]">
-                    {modals.studyModalData.studyIntroduce}
-                  </span>
-                </div>
-              </div>
-              <div className="flex justify-center">
-                <Button
-                  text="닫기"
-                  blueType="light"
-                  onClick={closeStudyModal}
-                  className="text-[14px] h-[47px] mr-2"
-                />
-                <Button
-                  text="신청"
-                  blueType="dark"
-                  onClick={() => {
-                    alert('준비중');
-                    return;
-                  }}
-                  className="text-[14px] h-[47px] ml-2"
-                />
-              </div>
-            </Modal>
+              </Modal>
+            ) : null}
           </div>
           {/* Pagination Button */}
           <div className="flex justify-center mt-4">
@@ -521,7 +634,7 @@ const Home = () => {
               &lt;
             </button>
             {Array.from(
-              { length: Math.ceil(recuritStudyCards.length / recuritPerPage) },
+              { length: Math.ceil(recruitingStudies.length / recuritPerPage) },
               (_, i) => (
                 <button
                   key={i}
@@ -537,7 +650,7 @@ const Home = () => {
               onClick={() => paginate(recuritPage + 1)}
               disabled={
                 recuritPage ===
-                Math.ceil(recuritStudyCards.length / recuritPerPage)
+                Math.ceil(recruitingStudies.length / recuritPerPage)
               }
             >
               &gt;
@@ -576,17 +689,17 @@ const Home = () => {
             <div className="flex-col">
               <Input
                 label="스터디 제목"
-                value={createFormData.studyTitle}
+                value={createFormData.name}
                 onChange={(event) =>
-                  handleFieldChange('studyTitle', event.target.value)
+                  handleFieldChange('name', event.target.value)
                 }
                 className="mb-3"
               />
               <Input
                 label="스터디 종류"
-                value={createFormData.studyType}
+                value={createFormData.type}
                 onChange={(event) =>
-                  handleFieldChange('studyType', event.target.value)
+                  handleFieldChange('type', event.target.value)
                 }
                 className="mb-3"
               />
@@ -610,25 +723,12 @@ const Home = () => {
                   className="ml-3"
                 />
               </div>
-              <Select
-                options={[
-                  { label: '온라인', value: 'Online' },
-                  { label: '오프라인', value: 'Offline' },
-                  { label: '온+오프라인', value: 'Online+Offline' },
-                ]}
-                placeholder="스터디 진행 방식"
-                value={createFormData.studyMethod}
-                setValue={(value) =>
-                  handleFieldChange('studyMethod', value || '')
-                }
-                className="mt-3 mb-3"
-              />
-              <div className="flex">
+              <div className="flex mt-3 mb-3">
                 <Input
                   label="최대인원"
-                  value={createFormData.maxParticipants}
+                  value={createFormData.headcount}
                   onChange={(event) =>
-                    handleFieldChange('maxParticipants', event.target.value)
+                    handleFieldChange('headcount', event.target.value)
                   }
                   className="mr-3"
                 />
@@ -638,22 +738,42 @@ const Home = () => {
                     { label: '비공개', value: 'Off' },
                   ]}
                   placeholder="모집등록"
-                  value={createFormData.recruitmentType}
+                  value={createFormData.isRecruit}
                   setValue={(value) =>
-                    handleFieldChange('recruitmentType', value || '')
+                    handleFieldChange('isRecruit', value || '')
                   }
                   className="ml-3"
                 />
               </div>
             </div>
-            <Input
+            <div className="flex flex-col gap-1">
+              <span className="text-left text-[12px] text-gray-400">
+                스터디 소개글
+              </span>
+              <textarea
+                value={createFormData.introduction}
+                onChange={(event) =>
+                  handleFieldChange('introduction', event.target.value)
+                }
+                maxLength={300}
+                className="p-2 h-[120px] w-full text-[13px] resize-none outline-none rounded-[10px] border-[0.5px] border-gray-400"
+                placeholder="스터디에 대한 소개를 작성해주세요."
+              />
+              <div className="flex justify-end">
+                <span className="text-[12px] text-gray-400">
+                  {createFormData.introduction.length}/300
+                </span>
+              </div>
+            </div>
+            {/* <Input
               label="스터디 소개말"
-              value={createFormData.studyIntroduction}
+              value={createFormData.introduction}
               onChange={(event) =>
-                handleFieldChange('studyIntroduction', event.target.value)
+                handleFieldChange('introduction', event.target.value)
               }
-              className="mt-3 h-[120px]"
-            />
+              className="mt-3 h-[120px] resize-none"
+            /> 
+            Input 멀티라인이 지원이 안돼서 textarea 태그로 변경*/}
             <div className="flex pt-5 gap-5">
               <Button
                 text="닫기"
