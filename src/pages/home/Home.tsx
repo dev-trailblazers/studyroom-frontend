@@ -8,6 +8,7 @@ import {
   notifications,
 } from '../../data';
 import { useNavigate } from 'react-router-dom';
+import { updateObjectState } from '../../utils';
 
 const IN_STUDY_PAGE = 4;
 const RECURIT_PER_PAGE = 12;
@@ -150,12 +151,17 @@ const Home = () => {
       isCreateModalOpen: false,
     }));
   };
+
   const closeStudyModal = () => {
-    setModals((prevModals) => ({
-      ...prevModals,
+    updateObjectState(setModals, {
       isStudyModalOpen: false,
       studyModalData: recuritStudyInfo,
-    }));
+    });
+    // setModals((prevModals) => ({
+    //   ...prevModals,
+    //   isStudyModalOpen: false,
+    //   studyModalData: recuritStudyInfo,
+    // }));
   };
 
   // 스터디 생성 모달 필드 관리 함수

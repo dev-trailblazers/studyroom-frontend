@@ -7,7 +7,7 @@ import { Gender } from '../../../data';
 import Logo from '../../../assets/logo.png';
 
 import { useTimer } from 'react-timer-hook';
-import { checkEmptyObjectInput, onChangeObjectInput } from '../../../utils';
+import { checkEmptyObject, updateObjectState } from '../../../utils';
 
 interface UserInfo extends SignUp {
   passwordCheck: string;
@@ -281,7 +281,7 @@ const SignUp = () => {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (checkEmptyObjectInput(userInfo, setUserInfoError)) {
+      if (checkEmptyObject(userInfo, setUserInfoError)) {
         return;
       }
 
@@ -355,12 +355,9 @@ const SignUp = () => {
                         label="아이디"
                         value={userInfo.username}
                         onChange={(event) =>
-                          onChangeObjectInput(
-                            userInfo,
-                            setUserInfo,
-                            event.target.value,
-                            'username'
-                          )
+                          updateObjectState(setUserInfo, {
+                            username: event.target.value,
+                          })
                         }
                       />
                       {userInfoError.username && (
@@ -387,12 +384,9 @@ const SignUp = () => {
                     label="비밀번호"
                     value={userInfo.password}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'password'
-                      )
+                      updateObjectState(setUserInfo, {
+                        password: event.target.value,
+                      })
                     }
                   />
                   {userInfoError.password && (
@@ -409,12 +403,9 @@ const SignUp = () => {
                     label="비밀번호 확인"
                     value={userInfo.passwordCheck}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'passwordCheck'
-                      )
+                      updateObjectState(setUserInfo, {
+                        passwordCheck: event.target.value,
+                      })
                     }
                   />
                   {userInfoError.passwordCheck && (
@@ -433,12 +424,9 @@ const SignUp = () => {
                         label="이메일"
                         value={userInfo.email}
                         onChange={(event) =>
-                          onChangeObjectInput(
-                            userInfo,
-                            setUserInfo,
-                            event.target.value,
-                            'email'
-                          )
+                          updateObjectState(setUserInfo, {
+                            email: event.target.value,
+                          })
                         }
                       />
                       {userInfoError.email && (
@@ -465,12 +453,9 @@ const SignUp = () => {
                     label="이름"
                     value={userInfo.name}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'name'
-                      )
+                      updateObjectState(setUserInfo, {
+                        name: event.target.value,
+                      })
                     }
                   />
                   {userInfoError.name && (
@@ -485,12 +470,9 @@ const SignUp = () => {
                     label="나이"
                     value={userInfo.birth}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'birth'
-                      )
+                      updateObjectState(setUserInfo, {
+                        birth: event.target.value,
+                      })
                     }
                   />
                   {userInfoError.birth && (
@@ -504,7 +486,7 @@ const SignUp = () => {
                 options={Education}
                 placeholder="학력"
                 value={userInfo.education}
-                setValue={(value) => onChangeObjectInput(value ?? '', 'education')}
+                setValue={(value) => updateObjectState(value ?? '', 'education')}
               /> */}
                 <div className="w-full flex flex-col gap-1">
                   <Select
@@ -512,12 +494,7 @@ const SignUp = () => {
                     placeholder="성별"
                     value={userInfo.gender}
                     setValue={(value) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        value ?? '',
-                        'gender'
-                      )
+                      updateObjectState(setUserInfo, { gender: value ?? '' })
                     }
                   />
                   {userInfoError.gender && (
@@ -564,12 +541,7 @@ const SignUp = () => {
                 label="인증번호"
                 value={userInfo.code}
                 onChange={(event) =>
-                  onChangeObjectInput(
-                    userInfo,
-                    setUserInfo,
-                    event.target.value,
-                    'code'
-                  )
+                  updateObjectState(setUserInfo, { code: event.target.value })
                 }
               />
               <span className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[14px] text-red-600 font-medium">
