@@ -8,6 +8,7 @@ import Logo from '../../../assets/logo.png';
 
 import { useTimer } from 'react-timer-hook';
 import { checkEmptyObject, updateObjectState } from '../../../utils';
+import { post } from '../../../apis/callApi';
 
 interface UserInfo extends SignUp {
   passwordCheck: string;
@@ -68,7 +69,12 @@ const SignUp = () => {
   const { seconds, minutes, pause, restart } = useTimer({
     expiryTimestamp,
     autoStart: false,
-    onExpire: () => console.warn('onExpire called'),
+    onExpire: () => {
+      console.warn('onExpire called');
+      alert(
+        '인증 번호 입력 유효시간이 만료되었습니다. 재전송 하시길 바랍니다. '
+      );
+    },
   });
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
@@ -164,15 +170,15 @@ const SignUp = () => {
         return;
       }
 
-      const response = await fetch(`/api/member/username`, {
-        method: 'POST',
-        credentials: 'include',
+      const duplicatedResult = await post({
+        params: '/member/username',
         headers: {
           'Content-Type': 'text/plain',
         },
         body: userInfo.username,
       });
-      const duplicatedResult = await response.json();
+
+      console.log(duplicatedResult);
 
       if (duplicatedResult) {
         alert('이미 사용중인 아이디입니다.');
@@ -185,7 +191,7 @@ const SignUp = () => {
       if (error.name === 'SyntaxError') {
         alert('중복 확인 실패했습니다.');
       }
-      console.log(error.name);
+      console.log(error);
     }
   };
 
@@ -200,9 +206,9 @@ const SignUp = () => {
   const onCertifyEmail = async () => {
     try {
       restartTimer();
-      await fetch(`/api/auth/new/email`, {
-        method: 'POST',
-        credentials: 'include',
+
+      await post({
+        params: '/auth/new/email',
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -251,15 +257,10 @@ const SignUp = () => {
         return;
       }
 
-      const response = await fetch(`/api/auth/email`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const isCheckCertify = await post({
+        params: '/auth/email',
         body: JSON.stringify({ email, code }),
       });
-      const isCheckCertify = await response.json();
 
       if (isCheckCertify) {
         setIsCertifyOpen(false);
@@ -300,11 +301,8 @@ const SignUp = () => {
         return;
       }
 
-      await fetch(`/api/member/join`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
+      await post({
+        params: '/member/join',
         body: JSON.stringify({
           username,
           password,
