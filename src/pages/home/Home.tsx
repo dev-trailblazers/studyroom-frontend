@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { updateObjectState } from '../../utils';
 import { useAuth } from '../../App';
+import useApi from '../../apis/useApi';
 
 const IN_STUDY_PAGE = 4;
 const RECURIT_PER_PAGE = 12;
@@ -35,33 +36,9 @@ const recuritStudyInfo = {
   maxParticipants: '',
 };
 
-const fetchRecruitingStudies = async () => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/study/list/recruiting?page=0&size=10&sort=createdAt`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          Accept: '*/*',
-          'Access-Control-Allow-Credentials': 'true',
-          'Access-Control-Allow-Origin': 'http://localhost:5173',
-        },
-      }
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch recruiting studies');
-    }
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    console.error('Error fetching recruiting studies:', error.message);
-    throw error;
-  }
-};
-
 const Home = () => {
   const navigate = useNavigate();
+  const { get } = useApi();
 
   const [headerActiveIndex, setHeaderActiveIndex] = useState(0);
   const [recuritButtonActive, setRecuritButtonActive] =
@@ -90,19 +67,12 @@ const Home = () => {
 
   // 오늘 날짜 가져오는 함수
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
     // 페이지가 활성화될 때 실행될 함수
     const loadData = async () => {
       try {
         const recruitingStudies = await fetchRecruitingStudies();
         console.log('Recruiting studies:', recruitingStudies);
-        // 여기서 데이터를 사용하여 UI를 업데이트하거나 처리합니다.
+        // 여기서 데이터를 사용하여 UI를 업데이트하거나 처리
       } catch (error) {
         // 오류 처리
         console.log(error);
@@ -112,46 +82,66 @@ const Home = () => {
     // 페이지가 활성화될 때 실행될 함수 호출
     loadData();
 
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // []를 전달하여 컴포넌트가 마운트될 때 한 번만 실행되도록 함
 
+  // 아코디언 창의 높이를 열고 닫는 효과를 적용하는 useEffect
+  useEffect(() => {
+    accordionRef.current !== null &&
+      (accordionRef.current.style.height = isAccordionOpen
+        ? `${accordionRef.current.scrollHeight}px`
+        : '0');
+  }, [isAccordionOpen]);
+
+  const fetchRecruitingStudies = async () => {
+    try {
+      const response = await get({
+        params: '/study/list/recruiting?page=0&size=10&sort=createdAt',
+        headers: {
+          Accept: '*/*',
+          'Access-Control-Allow-Credentials': 'true',
+          'Access-Control-Allow-Origin': 'http://localhost:5173',
+        },
+      });
+      const data = await response.json();
+
+      return data;
+    } catch (error: any) {
+      console.error('Error fetching recruiting studies:', error.message);
+      throw error;
+    }
+  };
+
   // 모달 상태관리
   const openLogoutModal = () => {
-    setModals((prevModals) => ({
-      ...prevModals,
-      isLogoutModalOpen: true,
-    }));
+    updateObjectState(setModals, { isLogoutModalOpen: true });
   };
+
   const openCreateModal = () => {
-    setModals((prevModals) => ({
-      ...prevModals,
-      isCreateModalOpen: true,
-    }));
+    updateObjectState(setModals, { isCreateModalOpen: true });
   };
   const openStudyModal = (id: number) => {
     const studyData = recuritStudyModal.find((item) => item.id === id);
 
     if (studyData) {
-      setModals((prevModals) => ({
-        ...prevModals,
+      updateObjectState(setModals, {
         isStudyModalOpen: true,
         studyModalData: studyData,
-      }));
+      });
     }
   };
 
   const closeLogoutModal = () => {
-    setModals((prevModals) => ({
-      ...prevModals,
-      isLogoutModalOpen: false,
-    }));
+    updateObjectState(setModals, { isLogoutModalOpen: false });
   };
 
   const closeCreateModal = () => {
-    setModals((prevModals) => ({
-      ...prevModals,
-      isCreateModalOpen: false,
-    }));
+    updateObjectState(setModals, { isCreateModalOpen: false });
   };
 
   const closeStudyModal = () => {
@@ -159,11 +149,6 @@ const Home = () => {
       isStudyModalOpen: false,
       studyModalData: recuritStudyInfo,
     });
-    // setModals((prevModals) => ({
-    //   ...prevModals,
-    //   isStudyModalOpen: false,
-    //   studyModalData: recuritStudyInfo,
-    // }));
   };
 
   // 스터디 생성 모달 필드 관리 함수
@@ -196,14 +181,6 @@ const Home = () => {
         break;
     }
   };
-
-  // 아코디언 창의 높이를 열고 닫는 효과를 적용하는 useEffect
-  useEffect(() => {
-    accordionRef.current !== null &&
-      (accordionRef.current.style.height = isAccordionOpen
-        ? `${accordionRef.current.scrollHeight}px`
-        : '0');
-  }, [isAccordionOpen]);
 
   // 참여 중인 스터디 페이지 이전 클릭
   const handlePreviousClick = () => {
