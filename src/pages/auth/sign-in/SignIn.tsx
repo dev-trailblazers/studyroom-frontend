@@ -4,8 +4,9 @@ import Kakao from '../../../assets/kakao_logo.svg';
 import { Button, Input } from '../../../components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
 import { checkEmptyObject, updateObjectState } from '../../../utils';
+import useApi from '../../../apis/useApi';
+import { useAuth } from '../../../App';
 
 interface UserInfo {
   username: string;
@@ -19,18 +20,17 @@ interface UserInfoError {
   [key: string]: boolean;
 }
 
-const initialUserInfo = { username: '', password: '' };
+const initialUserInfo = { username: 'test123', password: 'Test123$' };
 const initialUserInfoError = { username: false, password: false };
-const ACCESS_TOKEN = 'accessToken';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { post } = useApi();
+  const { setAccessToken } = useAuth();
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [userInfoError, setUserInfoError] =
     useState<UserInfoError>(initialUserInfoError);
-
-  const [, setCookie] = useCookies([ACCESS_TOKEN]);
 
   useEffect(() => {
     // Input 유효성 에러 발생 -> onChange 시 사라짐
@@ -73,8 +73,8 @@ const SignIn = () => {
     formData.append('username', username);
     formData.append('password', password);
 
-    return await fetch('/api/login', {
-      method: 'POST',
+    return await post({
+      params: '/login',
       body: formData,
     });
   };
@@ -84,10 +84,7 @@ const SignIn = () => {
     const accessToken = response.headers.get('Authorization')?.split(' ')[1];
 
     if (accessToken) {
-      setCookie(ACCESS_TOKEN, accessToken, {
-        maxAge: 60 * 60 * 10,
-      });
-
+      setAccessToken(accessToken);
       alert('로그인 되었습니다.');
       navigate('/');
     } else {

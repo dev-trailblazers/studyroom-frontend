@@ -9,6 +9,7 @@ import {
 } from '../../data';
 import { useNavigate } from 'react-router-dom';
 import { updateObjectState } from '../../utils';
+import { useAuth } from '../../App';
 
 const IN_STUDY_PAGE = 4;
 const RECURIT_PER_PAGE = 12;
@@ -61,6 +62,7 @@ const fetchRecruitingStudies = async () => {
 
 const Home = () => {
   const navigate = useNavigate();
+
   const [headerActiveIndex, setHeaderActiveIndex] = useState(0);
   const [recuritButtonActive, setRecuritButtonActive] =
     useState<boolean>(false);

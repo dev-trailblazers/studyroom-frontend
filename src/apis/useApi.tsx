@@ -22,12 +22,15 @@ const useApi = () => {
         credentials: 'include',
         method,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
+          // Authorization: `Bearer ${accessToken}`,
           ...headers,
         },
         body,
       });
+
+      console.log(body);
+
+      console.log(response);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -36,26 +39,25 @@ const useApi = () => {
             credentials: 'include',
             method,
             headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${newAccessToken}`,
+              // Authorization: `Bearer ${accessToken}`,
               ...headers,
             },
-            body: JSON.stringify(body),
+            body,
           });
+
+          console.log(retryResponse);
 
           if (!retryResponse.ok) {
             throw new Error(`HTTP Error Status ${retryResponse.status}`);
           }
 
-          const retryData = await retryResponse.json();
-          return retryData;
+          return retryResponse;
         } else {
           throw new Error(`HTTP Error Status ${response.status}`);
         }
       }
 
-      const data = await response.json();
-      return data;
+      return response;
     } catch (error) {
       console.log(error);
       throw error;

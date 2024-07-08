@@ -38,13 +38,20 @@ interface UserInfoError {
 }
 
 const initialUserInfo = {
-  username: '',
-  password: '',
-  passwordCheck: '',
-  email: '',
-  name: '',
-  birth: '',
-  gender: '',
+  // username: '',
+  // password: '',
+  // passwordCheck: '',
+  // email: '',
+  // name: '',
+  // birth: '',
+  // gender: '',
+  username: 'test123',
+  password: 'Test123$',
+  passwordCheck: 'Test123$',
+  email: 'povy1203@gmail.com',
+  name: '홍길동',
+  birth: '1995-05-06',
+  gender: 'M',
   code: '',
 };
 
@@ -184,13 +191,15 @@ const SignUp = () => {
         body: userInfo.username,
       });
 
+      const duplicatedJson = await duplicatedResult.json();
+
       alert(
-        duplicatedResult
+        duplicatedJson
           ? '이미 사용중인 아이디입니다.'
           : '사용 가능한 아이디입니다.'
       );
 
-      setIsDuplicated(duplicatedResult);
+      setIsDuplicated(duplicatedJson);
     } catch (error) {
       alert('중복 확인 실패했습니다.');
       console.log(error);
@@ -258,10 +267,15 @@ const SignUp = () => {
     try {
       const isCheckCertify = await post({
         params: '/auth/email',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, code }),
       });
 
-      if (isCheckCertify) {
+      const isCheckCertifyJson = await isCheckCertify.json();
+
+      if (isCheckCertifyJson) {
         setIsCertifyOpen(false);
         setIsCertifing(true);
         pause();
@@ -280,7 +294,13 @@ const SignUp = () => {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (checkEmptyObject(userInfo, setUserInfoError)) return;
+      if (
+        checkEmptyObject(
+          { username, password, passwordCheck, name, email, birth, gender },
+          setUserInfoError
+        )
+      )
+        return;
 
       if (isDuplicated || isDuplicated === null) {
         alert('아이디 중복 확인 과정을 진행해 주세요.');
@@ -299,6 +319,9 @@ const SignUp = () => {
 
       await post({
         params: '/member/join',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           username,
           password,

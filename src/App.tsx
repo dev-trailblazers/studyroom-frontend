@@ -12,9 +12,11 @@ const queryClient = new QueryClient();
 const AuthContext = createContext<{
   accessToken: string | null;
   refreshAccessToken: () => void;
+  setAccessToken: (accessToken: string | null) => void;
 }>({
   accessToken: null,
   refreshAccessToken: () => {},
+  setAccessToken: () => {},
 });
 
 function App() {
@@ -25,6 +27,10 @@ function App() {
   useEffect(() => {
     fetchAccessToken();
   }, []);
+
+  useEffect(() => {
+    console.log(accessToken);
+  }, [accessToken]);
 
   const fetchAccessToken = async () => {
     try {
@@ -46,6 +52,7 @@ function App() {
   const authContextValue = {
     accessToken,
     refreshAccessToken,
+    setAccessToken,
   };
 
   return (
