@@ -83,10 +83,12 @@ const SignIn = () => {
   const signInResponse = async (response: Response) => {
     const accessToken = response.headers.get('Authorization')?.split(' ')[1];
 
+    console.log(response);
+
     if (accessToken) {
       setAccessToken(accessToken);
       alert('로그인 되었습니다.');
-      navigate('/');
+      // navigate('/');
     } else {
       alert(
         '로그인에 실패하였습니다. 아이디 혹은 비밀번호를 다시 입력해 주세요.'
@@ -114,7 +116,7 @@ const SignIn = () => {
 
   // 카카오 로그인
   const onSignInKakao = async () => {
-    window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_URL}/oauth2/authorization/kakao`;
+    window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_API_URL}/oauth2/authorization/kakao`;
   };
 
   return (

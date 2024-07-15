@@ -153,10 +153,7 @@ const Home = () => {
 
   // 스터디 생성 모달 필드 관리 함수
   const handleFieldChange = (fieldName: string, value: string) => {
-    setCreateFormData((prevFields) => ({
-      ...prevFields,
-      [fieldName]: value,
-    }));
+    updateObjectState(setCreateFormData, { [fieldName]: value });
   };
 
   // 스터디 생성 함수
@@ -216,12 +213,12 @@ const Home = () => {
 
   const onSignOut = async () => {
     try {
-      const kakaoApiKey = 'e5b137659ae5199867ec2adb0343cec6';
+      const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_API_KEY;
       const response = await fetch(
-        'https://kauth.kakao.com/oauth/logout' +
-          'client_id=' +
-          kakaoApiKey +
-          '&logout_redirect_uri=http://localhost:8080/logout'
+        // 'https://kauth.kakao.com/oauth/logout' +
+        //   'client_id=' +
+        //   KAKAO_API_KEY +
+        `https://kauth.kakao.com/oauth/logout?client_id=${KAKAO_API_KEY}&logout_redirect_uri=http://localhost:8080/logout`
       );
 
       console.log(response);
