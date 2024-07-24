@@ -63,7 +63,7 @@ const modalInfo = {
   studyModalData: null,
 };
 
-const Home = () => {
+const Main = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState('');
   const [headerActiveIndex, setHeaderActiveIndex] = useState(0);
@@ -795,4 +795,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Main;

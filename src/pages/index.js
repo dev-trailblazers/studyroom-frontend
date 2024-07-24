@@ -1,4 +1,4 @@
-export { default as Home } from './home/Home';
-export { default as Notice } from './home/Notice';
-export { default as Mypage } from './home/Mypage';
+export { default as Main } from './main/Main';
+export { default as Notice } from './notice/Notice';
+export { default as Mypage } from './mypage/Mypage';
 export { SignIn, SignUp } from './auth';
