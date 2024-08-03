@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button, Input, Select, Modal } from '../../components';
 import { useNavigate } from 'react-router-dom';
-import { notifications } from '../../data/Notifications';
-import { inNoticeCards } from '../../data/inNoticeCards';
+import { notifications, inNoticeCards } from '../../data';
 
 const createStudyInfo = {
   studyTitle: '',
@@ -15,7 +14,7 @@ const createStudyInfo = {
   studyIntroduction: '',
 };
 
-const noticePerPage = 5;
+const NOTICE_PER_PAGE = 5;
 
 const Notice = () => {
   const navigate = useNavigate();
@@ -29,8 +28,8 @@ const Notice = () => {
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const accordionRef = useRef<HTMLDivElement>(null);
   const [noticePage, setRecuritPage] = useState(1);
-  const indexOfLastItem = noticePage * noticePerPage;
-  const indexOfFirstItem = indexOfLastItem - noticePerPage;
+  const indexOfLastItem = noticePage * NOTICE_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - NOTICE_PER_PAGE;
   const currentItems = inNoticeCards.slice(indexOfFirstItem, indexOfLastItem);
 
   // 모달 상태관리
@@ -225,7 +224,7 @@ const Notice = () => {
               &lt;
             </button>
             {Array.from(
-              { length: Math.ceil(inNoticeCards.length / noticePerPage) },
+              { length: Math.ceil(inNoticeCards.length / NOTICE_PER_PAGE) },
               (_, i) => (
                 <button
                   key={i}
@@ -240,7 +239,7 @@ const Notice = () => {
               className="mx-1 px-3 py-1"
               onClick={() => paginate(noticePage + 1)}
               disabled={
-                noticePage === Math.ceil(inNoticeCards.length / noticePerPage)
+                noticePage === Math.ceil(inNoticeCards.length / NOTICE_PER_PAGE)
               }
             >
               &gt;

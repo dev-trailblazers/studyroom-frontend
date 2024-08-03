@@ -4,8 +4,9 @@ import Kakao from '../../../assets/kakao_logo.svg';
 import { Button, Input } from '../../../components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useCookies } from 'react-cookie';
-import { checkEmptyObjectInput, onChangeObjectInput } from '../../../utils';
+import { checkEmptyObject, updateObjectState } from '../../../utils';
+import useApi from '../../../apis/useApi';
+import { useAuth } from '../../../App';
 
 interface UserInfo {
   username: string;
@@ -19,83 +20,94 @@ interface UserInfoError {
   [key: string]: boolean;
 }
 
-const initialUserInfo = { username: '', password: '' };
-
+const initialUserInfo = { username: 'test123', password: 'Test123$' };
 const initialUserInfoError = { username: false, password: false };
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { post } = useApi();
+  const { setAccessToken } = useAuth();
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [userInfoError, setUserInfoError] =
     useState<UserInfoError>(initialUserInfoError);
 
-  const [_, setCookie] = useCookies(['accesstoken']);
-
   useEffect(() => {
+    // Input 유효성 에러 발생 -> onChange 시 사라짐
+    const disappearError = (field: string) => {
+      if (userInfo[field].length !== 0) {
+        setUserInfoError((prev) => ({ ...prev, [field]: false }));
+      }
+    };
     disappearError('username');
-  }, [userInfo.username]);
-
-  useEffect(() => {
     disappearError('password');
-  }, [userInfo.password]);
+  }, [userInfo.username, userInfo.password]);
 
-  // Input 유효성 에러 발생 -> onChange 시 사라짐
-  const disappearError = (field: string) => {
-    const newUserInfoObject = { ...userInfo };
+  // Input 유효성 검사
+  const validateForm = () => {
+    const { username, password } = userInfo;
+    let isValid = true;
 
-    if (newUserInfoObject[field].length !== 0) {
-      const newUserInfoErrorObject = { ...userInfoError };
-      newUserInfoErrorObject[field] = false;
-      setUserInfoError(newUserInfoErrorObject);
+    if (checkEmptyObject(userInfo, setUserInfoError)) {
+      return false;
+    }
+
+    if (username.length === 0) {
+      setUserInfoError((prev) => ({ ...prev, username: true }));
+      isValid = false;
+    }
+
+    if (password.length === 0) {
+      setUserInfoError((prev) => ({ ...prev, password: true }));
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  // 로그인 요청
+  const signInRequest = async () => {
+    const { username, password } = userInfo;
+
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
+
+    return await post({
+      params: '/login',
+      body: formData,
+    });
+  };
+
+  // 로그인 응답
+  const signInResponse = async (response: Response) => {
+    const accessToken = response.headers.get('Authorization')?.split(' ')[1];
+
+    console.log(response);
+
+    if (accessToken) {
+      setAccessToken(accessToken);
+      alert('로그인 되었습니다.');
+      // navigate('/');
+    } else {
+      alert(
+        '로그인에 실패하였습니다. 아이디 혹은 비밀번호를 다시 입력해 주세요.'
+      );
+      return;
     }
   };
 
   // 일반 로그인
   const onSignIn = async () => {
     try {
-      if (checkEmptyObjectInput(userInfo, setUserInfoError)) {
-        return;
-      }
-
-      // access token 저장 로직 및 토큰 만료 시 어떻게 할지
-      const { username, password } = userInfo;
-
-      if (username.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, username: true }));
-        return;
-      }
-
-      if (password.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, password: true }));
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
-
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        body: formData,
-      });
-
-      console.log(response);
-      // refresh token은 나중에 진행
-      const access_token = response.headers.get('Authorization')?.split(' ')[1];
-
-      if (access_token) {
-        setCookie('accesstoken', access_token, {
-          maxAge: 60 * 60 * 10,
-        });
-
-        alert('로그인 되었습니다.');
-        navigate('/');
-      } else {
-        alert(
-          '로그인에 실패하였습니다. 아이디 혹은 비밀번호를 다시 입력해 주세요.'
-        );
-        return;
+      if (validateForm()) {
+        try {
+          const response = await signInRequest();
+          signInResponse(response);
+        } catch (error) {
+          console.log(error);
+          alert('로그인 과정에서 오류가 발생했습니다..');
+        }
       }
     } catch (error) {
       console.log(error);
@@ -104,7 +116,7 @@ const SignIn = () => {
 
   // 카카오 로그인
   const onSignInKakao = async () => {
-    window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_URL}/oauth2/authorization/kakao`;
+    window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_API_URL}/oauth2/authorization/kakao`;
   };
 
   return (
@@ -137,19 +149,13 @@ const SignIn = () => {
                   label="아이디"
                   value={userInfo.username}
                   onChange={(event) =>
-                    onChangeObjectInput(
-                      userInfo,
-                      setUserInfo,
-                      event.target.value,
-                      'username'
-                    )
+                    updateObjectState(setUserInfo, {
+                      username: event.target.value,
+                    })
                   }
+                  isError={userInfoError.username}
+                  error="아이디를 입력해 주세요."
                 />
-                {userInfoError.username && (
-                  <span className="text-[11px] text-red-400 px-2">
-                    아이디를 입력해 주세요.
-                  </span>
-                )}
               </div>
               <div className="w-full flex flex-col gap-1">
                 <Input
@@ -157,19 +163,13 @@ const SignIn = () => {
                   label="비밀번호"
                   value={userInfo.password}
                   onChange={(event) =>
-                    onChangeObjectInput(
-                      userInfo,
-                      setUserInfo,
-                      event.target.value,
-                      'password'
-                    )
+                    updateObjectState(setUserInfo, {
+                      password: event.target.value,
+                    })
                   }
+                  isError={userInfoError.password}
+                  error="비밀번호를 입력해 주세요."
                 />
-                {userInfoError.password && (
-                  <span className="text-[11px] text-red-400 px-2">
-                    비밀번호를 입력해 주세요.
-                  </span>
-                )}
               </div>
             </form>
             <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
