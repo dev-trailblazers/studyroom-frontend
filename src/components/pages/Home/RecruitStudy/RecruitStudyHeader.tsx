@@ -26,20 +26,20 @@ const RecruitStudyHeader = () => {
       className="flex items-center justify-between w-full"
       id="recruit-study-header"
     >
-      <h1 className="text-3xl font-semibold text-primary-600">
+      <h1 className="w-full text-3xl font-semibold text-primary-600">
         모집중인 스터디
       </h1>
-      <nav className="flex items-center gap-5">
+      <nav className="flex justify-end w-full gap-5">
         <Select
           options={ViewList}
           placeholder="조회 순"
           value={select}
           setValue={(value) => setSelect(value ?? '')}
-          className="w-[190px]"
+          className="!w-[190px]"
         />
         <Button
           text={recruitButtonActive ? '모집중 스터디' : '전체 스터디'}
-          className={`w-[190px] h-10 border border-primary-600 border-solid rounded-md text-sm font-medium ${
+          className={`!w-[190px] h-10 border border-primary-600 border-solid rounded-md text-sm font-medium ${
             recruitButtonActive
               ? 'bg-primary-800 text-white border-primary-800'
               : 'bg-white text-primary-600'
@@ -53,7 +53,7 @@ const RecruitStudyHeader = () => {
             setStudySearch(event.target.value);
           }}
           onKeyPress={handleKeyPress}
-          className="w-[190px]"
+          className="!w-[190px]"
         />
       </nav>
     </header>
