@@ -321,7 +321,7 @@ const Main = () => {
     <>
       <div className="min-h-screen pt-10 pl-10 pr-[50px] lg:pl-20 lg:pr-[90px] flex flex-col gap-10">
         {/* logout Section */}
-        <div className="flex absolute top-0 right-4 lg:right-14 pt-4 pr-5">
+        <div className="absolute top-0 flex pt-4 pr-5 right-4 lg:right-14">
           <span className="text-[12px] text-gray-400">{userName}님ㅤ|ㅤ</span>
           <button
             className="text-[12px] text-gray-400"
@@ -340,7 +340,7 @@ const Main = () => {
           >
             <div className="text-center">
               <p>로그아웃을 하시겠습니까?</p>
-              <div className="flex pt-5 gap-5">
+              <div className="flex gap-5 pt-5">
                 <Button
                   text="아니오"
                   blueType="light"
@@ -409,11 +409,11 @@ const Main = () => {
         {/* inStudy Section*/}
         <div className="pt-5 pr-5 pl-5 flex flex-col rounded-[15px] bg-main shadow-box_03">
           {/* inStudy Header Section*/}
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h1 className="text-[18px] lg:text-[24px] text-white font-semibold">
               참여중인 스터디
             </h1>
-            <div className="flex ml-auto lg:ml-0 text-center gap-5 items-center">
+            <div className="flex items-center gap-5 ml-auto text-center lg:ml-0">
               <button
                 onClick={handlePreviousClick}
                 disabled={inStudyGroupIndex === 0}
@@ -437,9 +437,9 @@ const Main = () => {
             </div>
           </div>
           {/* inStudy Card Section */}
-          <div className="pt-5 pb-5 grid gap-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 pt-5 pb-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
             {inStudies.length === 0 ? (
-              <div className="col-span-4 w-full flex items-center justify-center">
+              <div className="flex items-center justify-center w-full col-span-4">
                 <span className="text-[28px] text-center text-white">
                   현재 참여 중인 스터디가 없습니다. <br />
                   다양한 스터디에 참가 해보세요 !
@@ -456,7 +456,7 @@ const Main = () => {
                     key={element.id}
                     className="p-5 h-[200px] lg:h-[200px] bg-white rounded-[20px] shadow-box_03 cursor-pointer transition duration-300 transform hover:scale-105"
                   >
-                    <div className="flex mb-3 justify-between font-semibold">
+                    <div className="flex justify-between mb-3 font-semibold">
                       <span>{element.name}</span>
                       {+element.endDate <= 5 ? (
                         <span className="text-red-500">
@@ -477,7 +477,7 @@ const Main = () => {
                       )}
                     </div>
                     <div className="flex flex-col gap-1 text-[14px] font-semibold">
-                      <span className=" text-gray-500">공지사항</span>
+                      <span className="text-gray-500 ">공지사항</span>
                       <span className="block text-[13px]">
                         {element.noticeArticle
                           ? element.noticeArticle
@@ -492,11 +492,11 @@ const Main = () => {
         {/* recruitStudy Section*/}
         <div className="py-5 pl-5 pr-5 flex flex-col rounded-[15px] bg-blue_05 shadow-box_03">
           {/* recruitStudy Header Section*/}
-          <div className="flex lg_max:flex-col justify-between items-center">
+          <div className="flex items-center justify-between lg_max:flex-col">
             <h1 className="text-[24px] lg_max:pb-3 text-main font-semibold">
               모집중인 스터디
             </h1>
-            <div className="flex gap-5 items-center">
+            <div className="flex items-center gap-5">
               <div>
                 <Select
                   options={ViewList}
@@ -529,7 +529,7 @@ const Main = () => {
             </div>
           </div>
           {/* recruitStudy Card Section*/}
-          <div className="pt-5 pb-5 grid gap-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 pt-5 pb-5 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4">
             {currentItems.map((element) => (
               <div
                 key={element.id}
@@ -542,7 +542,7 @@ const Main = () => {
               >
                 {/* Card Content */}
                 <div className="flex items-center justify-between mb-1 font-semibold">
-                  <span className="truncate text-sm">{element.name}</span>
+                  <span className="text-sm truncate">{element.name}</span>
                   <span className="text-[14px]">{element.startDate}</span>
                 </div>
                 <div className="flex flex-col gap-7">
@@ -604,7 +604,7 @@ const Main = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex mt-5 justify-center">
+                <div className="flex justify-center mt-5">
                   <Button
                     text="닫기"
                     blueType="light"
@@ -627,7 +627,7 @@ const Main = () => {
           {/* Pagination Button */}
           <div className="flex justify-center mt-4">
             <button
-              className="mx-1 px-3 py-1"
+              className="px-3 py-1 mx-1"
               onClick={() => paginate(recuritPage - 1)}
               disabled={recuritPage === 1}
             >
@@ -646,7 +646,7 @@ const Main = () => {
               )
             )}
             <button
-              className="mx-1 px-3 py-1"
+              className="px-3 py-1 mx-1"
               onClick={() => paginate(recuritPage + 1)}
               disabled={
                 recuritPage ===
@@ -663,7 +663,7 @@ const Main = () => {
         <h1>약관동의 등등</h1>
       </div>
       {/* fixed Button Section*/}
-      <div className="flex flex-col fixed bottom-5 right-3 gap-3">
+      <div className="fixed flex flex-col gap-3 bottom-5 right-3">
         <button
           className="bg-white text-blue_01 font-bold w-[40px] h-[40px] rounded-full shadow-box_03 transition duration-300 transform hover:scale-105"
           onClick={scrollToTop}
@@ -774,7 +774,7 @@ const Main = () => {
               className="mt-3 h-[120px] resize-none"
             /> 
             Input 멀티라인이 지원이 안돼서 textarea 태그로 변경*/}
-            <div className="flex pt-5 gap-5">
+            <div className="flex gap-5 pt-5">
               <Button
                 text="닫기"
                 blueType="light"

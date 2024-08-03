@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
@@ -19,6 +20,14 @@ export default defineConfig({
         // WebSocket 프로토콜 사용
         ws: true,
       },
+    },
+  },
+  resolve: {
+    alias: {
+      '@hooks': resolve(__dirname, 'src/hooks'),
+      '@components': resolve(__dirname, 'src/components'),
+      '@pages': resolve(__dirname, 'src/pages'),
+      // 필요에 따라 추가적인 경로 설정
     },
   },
 });

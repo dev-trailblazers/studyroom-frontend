@@ -1,0 +1,146 @@
+[
+  {
+    "id": 1,
+    "study_title": "리액트 파헤치기",
+    "study_type": "React",
+    "study_start_date": "2024.08.10",
+    "study_description": "리액트 딥 다이브 책을 읽으며 발표식으로 스터디를 진행합니다.리액트 딥 다이브 책을 읽으며 발표식으로 스터디를 진행합니다.",
+    "study_leader": "엄현호",
+    "study_personnel": 5
+  },
+  {
+    "id": 2,
+    "study_title": "Node.js 마스터",
+    "study_type": "Node.js",
+    "study_start_date": "2024.08.15",
+    "study_description": "Node.js의 기본 개념과 심화 개념을 다룹니다.",
+    "study_leader": "김철수",
+    "study_personnel": 7
+  },
+  {
+    "id": 3,
+    "study_title": "타입스크립트 기본",
+    "study_type": "TypeScript",
+    "study_start_date": "2024.08.20",
+    "study_description": "타입스크립트의 기본 문법과 사용법을 학습합니다.",
+    "study_leader": "박영희",
+    "study_personnel": 6
+  },
+  {
+    "id": 4,
+    "study_title": "CSS 그리드 레이아웃",
+    "study_type": "CSS",
+    "study_start_date": "2024.08.25",
+    "study_description": "CSS 그리드 레이아웃을 활용한 웹 디자인 방법을 학습합니다.",
+    "study_leader": "이민수",
+    "study_personnel": 8
+  },
+  {
+    "id": 5,
+    "study_title": "Express.js 초급",
+    "study_type": "Express.js",
+    "study_start_date": "2024.08.30",
+    "study_description": "Express.js를 활용한 웹 서버 구축 기초를 배웁니다.",
+    "study_leader": "최수진",
+    "study_personnel": 5
+  },
+  {
+    "id": 6,
+    "study_title": "웹 접근성 향상",
+    "study_type": "Accessibility",
+    "study_start_date": "2024.09.05",
+    "study_description": "웹 접근성 표준을 준수하여 웹사이트를 개선하는 방법을 학습합니다.",
+    "study_leader": "홍길동",
+    "study_personnel": 4
+  },
+  {
+    "id": 7,
+    "study_title": "데이터베이스 설계",
+    "study_type": "Database",
+    "study_start_date": "2024.09.10",
+    "study_description": "효율적인 데이터베이스 설계와 최적화 방법을 학습합니다.",
+    "study_leader": "김영희",
+    "study_personnel": 9
+  },
+  {
+    "id": 8,
+    "study_title": "Vue.js 심화",
+    "study_type": "Vue.js",
+    "study_start_date": "2024.09.15",
+    "study_description": "Vue.js의 고급 개념과 실제 프로젝트 적용 방법을 학습합니다.",
+    "study_leader": "이철수",
+    "study_personnel": 6
+  },
+  {
+    "id": 9,
+    "study_title": "GraphQL 기초",
+    "study_type": "GraphQL",
+    "study_start_date": "2024.09.20",
+    "study_description": "GraphQL을 활용한 데이터 쿼리와 서버 구축 방법을 학습합니다.",
+    "study_leader": "박민수",
+    "study_personnel": 7
+  },
+  {
+    "id": 10,
+    "study_title": "Next.js 시작하기",
+    "study_type": "Next.js",
+    "study_start_date": "2024.09.25",
+    "study_description": "Next.js를 사용하여 서버 사이드 렌더링과 정적 사이트 생성을 배웁니다.",
+    "study_leader": "오준수",
+    "study_personnel": 5
+  },
+  {
+    "id": 11,
+    "study_title": "Docker와 Kubernetes",
+    "study_type": "DevOps",
+    "study_start_date": "2024.09.30",
+    "study_description": "Docker와 Kubernetes를 사용한 컨테이너화 및 오케스트레이션 방법을 학습합니다.",
+    "study_leader": "장서현",
+    "study_personnel": 8
+  },
+  {
+    "id": 12,
+    "study_title": "Python 데이터 분석",
+    "study_type": "Python",
+    "study_start_date": "2024.10.05",
+    "study_description": "Python을 활용한 데이터 분석과 시각화 방법을 학습합니다.",
+    "study_leader": "서민정",
+    "study_personnel": 10
+  },
+  {
+    "id": 13,
+    "study_title": "AI 기초",
+    "study_type": "AI",
+    "study_start_date": "2024.10.10",
+    "study_description": "인공지능의 기초 개념과 기본 알고리즘을 학습합니다.",
+    "study_leader": "박지훈",
+    "study_personnel": 7
+  },
+  {
+    "id": 14,
+    "study_title": "Java 고급 프로그래밍",
+    "study_type": "Java",
+    "study_start_date": "2024.10.15",
+    "study_description": "Java를 활용한 고급 프로그래밍 기법과 디자인 패턴을 학습합니다.Java를 활용한 고급 프로그래밍 기법과 디자인 패턴을 학습합니다.Java를 활용한 고급 프로그래밍 기법과 디자인 패턴을 학습합니다.",
+    "study_leader": "김나영",
+    "study_personnel": 6
+  },
+  {
+    "id": 15,
+    "study_title": "머신러닝 모델링",
+    "study_type": "Machine Learning",
+    "study_start_date": "2024.10.20",
+    "study_description": "머신러닝 모델을 설계하고 평가하는 방법을 학습합니다.",
+    "study_leader": "이재현",
+    "study_personnel": 8
+  },
+  {
+    "id": 16,
+    "study_title": "안드로이드 앱 개발",
+    "study_type": "Android",
+    "study_start_date": "2024.10.25",
+    "study_description": "안드로이드 앱 개발 기초부터 배포까지의 과정을 학습합니다.",
+    "study_leader": "최은지",
+    "study_personnel": 9
+  }
+]
