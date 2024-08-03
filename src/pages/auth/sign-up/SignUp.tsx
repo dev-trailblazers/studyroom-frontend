@@ -48,7 +48,7 @@ const initialUserInfo = {
   username: 'test123',
   password: 'Test123$',
   passwordCheck: 'Test123$',
-  email: 'povy1203@gmail.com',
+  email: 'tlstjsdud566@gmail.com',
   name: '홍길동',
   birth: '1995-05-06',
   gender: 'M',
@@ -184,7 +184,7 @@ const SignUp = () => {
 
     try {
       const duplicatedResult = await post({
-        params: '/member/username',
+        params: '/member/join/username',
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -266,7 +266,7 @@ const SignUp = () => {
 
     try {
       const isCheckCertify = await post({
-        params: '/auth/email',
+        params: '/auth/verify/email',
         headers: {
           'Content-Type': 'application/json',
         },
