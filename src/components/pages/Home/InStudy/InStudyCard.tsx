@@ -1,11 +1,5 @@
 import { LoaderCircle } from 'lucide-react';
-
-interface InStudyTypes {
-  id: number;
-  StudyTitle: string;
-  StudyEndDate: string;
-  StudyNotice: string;
-}
+import { InStudyTypes } from 'src/types/InStudy';
 
 interface InStudyCardProps {
   loading: boolean;
@@ -48,7 +42,7 @@ const InStudyCard = ({ loading, data }: InStudyCardProps) => {
       </a>
       <a
         href="#"
-        className="block px-3 py-1 mx-auto text-sm font-medium border-[1px] rounded-lg text-main w-fit border-main transition duration-300 hover:scale-95"
+        className="flex items-center justify-center w-full h-8 font-medium text-white transition duration-300 rounded-lg text-md bg-primary-800 hover:scale-95"
         aria-label={item.StudyTitle + '룸으로 이동'}
         role="button"
       >

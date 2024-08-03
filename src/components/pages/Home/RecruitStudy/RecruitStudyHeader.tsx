@@ -23,41 +23,39 @@ const RecruitStudyHeader = () => {
 
   return (
     <header
-      className="flex items-center justify-between"
+      className="flex items-center justify-between w-full"
       id="recruit-study-header"
     >
-      <h1 className="text-3xl font-semibold text-main">모집중인 스터디</h1>
-      {/*       <div className="flex items-center gap-5">
-        <div>
-          <Select
-            options={ViewList}
-            placeholder="조회 순"
-            value={select}
-            setValue={(value) => setSelect(value ?? '')}
-            className="sm_max:w-[100px] md:w-[200px]"
-          />
-        </div>
+      <h1 className="text-3xl font-semibold text-primary-600">
+        모집중인 스터디
+      </h1>
+      <nav className="flex items-center gap-5">
+        <Select
+          options={ViewList}
+          placeholder="조회 순"
+          value={select}
+          setValue={(value) => setSelect(value ?? '')}
+          className="w-[190px]"
+        />
         <Button
           text={recruitButtonActive ? '모집중 스터디' : '전체 스터디'}
-          className={`sm_max:w-[100px] md:w-[200px] h-[40px] border border-blue_02 border-solid rounded-[10px] text-[12px] font-semibold ${
+          className={`w-[190px] h-10 border border-primary-600 border-solid rounded-md text-sm font-medium ${
             recruitButtonActive
-              ? 'bg-main text-white'
-              : 'bg-white text-blue_02 '
+              ? 'bg-primary-800 text-white border-primary-800'
+              : 'bg-white text-primary-600'
           }`}
           onClick={handleRecruitButton}
         />
-        <div>
-          <Input
-            label="스터디 검색"
-            value={studySearch}
-            onChange={(event) => {
-              setStudySearch(event.target.value);
-            }}
-            onKeyPress={handleKeyPress}
-            className="sm_max:w-[120px] md:w-[200px]"
-          />
-        </div>
-      </div> */}
+        <Input
+          label="스터디 검색"
+          value={studySearch}
+          onChange={(event) => {
+            setStudySearch(event.target.value);
+          }}
+          onKeyPress={handleKeyPress}
+          className="w-[190px]"
+        />
+      </nav>
     </header>
   );
 };

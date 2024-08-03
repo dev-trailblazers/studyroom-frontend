@@ -38,7 +38,7 @@ const Input = ({
 
   return (
     <>
-      <div className="relative flex w-full max-w-[24rem]">
+      <div className="relative">
         <CustomInput
           id={id}
           data-value={value ? 'true' : 'false'}
@@ -48,8 +48,6 @@ const Input = ({
           disabled={disabled}
           onChange={onChange}
           onKeyPress={onKeyPress}
-          onPointerEnterCapture={{}}
-          onPointerLeaveCapture={{}}
           crossOrigin={{}}
           containerProps={{
             className: `${className && `!min-w-0 ${className}`}`,

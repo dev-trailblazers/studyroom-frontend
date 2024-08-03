@@ -1,17 +1,8 @@
+import { useEffect, useState } from 'react';
 import RecruitStudyHeader from './RecruitStudyHeader';
 import RecruitStudyContent from './RecruitStudyContent';
 import RecruitStudyCard from './RecruitStudyCard';
-import { useEffect, useState } from 'react';
-
-interface RecruitStudyTypes {
-  id: number;
-  study_title: string;
-  study_type: string;
-  study_start_date: string;
-  study_description: string;
-  study_leader: string;
-  study_personnel: number;
-}
+import { RecruitStudyTypes } from 'src/types/RecruitStudy';
 
 const RecruitStudy = () => {
   const [recruitStudies, setRecruitStudies] = useState<RecruitStudyTypes[]>([]);
@@ -38,7 +29,7 @@ const RecruitStudy = () => {
 
   return (
     <section
-      className="flex flex-col w-full max-w-[1280px] m-auto p-5 mb-10 rounded-xl bg-blue_04 shadow-box_03"
+      className="flex flex-col w-full max-w-[1280px] m-auto p-5 mb-10 rounded-xl bg-primary-50 shadow-box_03"
       role="region"
       aria-labelledby="recruit-study-header"
     >
