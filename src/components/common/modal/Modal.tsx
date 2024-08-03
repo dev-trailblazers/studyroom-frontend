@@ -57,8 +57,8 @@ const Modal: React.FC<ModalProps> = ({
             className={`relative bg-white rounded-lg p-6 ${animationClass}`}
             style={{ width, height }}
           >
-            <div className="flex justify-between items-center mb-4 border-b border-gray-400 pb-2">
-              <h2 className="text-main text-lg font-semibold">{title}</h2>
+            <div className="flex items-center justify-between pb-2 mb-4 border-b border-gray-400">
+              <h2 className="text-lg font-semibold text-main">{title}</h2>
               {exitIcon && (
                 <button onClick={onClose} className="">
                   <svg

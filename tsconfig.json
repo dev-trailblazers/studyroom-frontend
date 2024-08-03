@@ -18,7 +18,14 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@hooks/*": ["src/hooks/*"],
+      "@components/*": ["src/components/*"],
+      "@pages/*": ["src/pages/*"]
+      // 추가 경로 필요시 여기에 작성
+    }
   },
   "include": ["src", "src/svg.d.ts"],
   "exclude": ["node_modules"],

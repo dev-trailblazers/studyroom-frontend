@@ -30,7 +30,7 @@ const SignIn = () => {
   const [userInfoError, setUserInfoError] =
     useState<UserInfoError>(initialUserInfoError);
 
-  const [_, setCookie] = useCookies(['accessToken']);
+  const [_, setCookie] = useCookies(['accesstoken']);
 
   useEffect(() => {
     disappearError('username');
@@ -80,11 +80,12 @@ const SignIn = () => {
         body: formData,
       });
 
+      console.log(response);
       // refresh token은 나중에 진행
-      const accessToken = response.headers.get('Authorization')?.split(' ')[1];
+      const access_token = response.headers.get('Authorization')?.split(' ')[1];
 
-      if (accessToken) {
-        setCookie('accessToken', accessToken, {
+      if (access_token) {
+        setCookie('accesstoken', access_token, {
           maxAge: 60 * 60 * 10,
         });
 

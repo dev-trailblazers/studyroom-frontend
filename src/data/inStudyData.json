@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "StudyTitle": "리액트 API 실습",
+    "StudyEndDate": "2024.08.05",
+    "StudyNotice": "금일 스터디는 휴무입니다. 다들 편하게 쉬시길 바랍니다."
+  },
+  {
+    "id": 2,
+    "StudyTitle": "Node.js 기초",
+    "StudyEndDate": "2024.08.10",
+    "StudyNotice": "다음 주에 과제 제출 바랍니다."
+  },
+  {
+    "id": 3,
+    "StudyTitle": "CSS 그리드 레이아웃",
+    "StudyEndDate": "2024.08.15",
+    "StudyNotice": "팀 프로젝트 발표 준비하세요."
+  },
+  {
+    "id": 4,
+    "StudyTitle": "타입스크립트 기초",
+    "StudyEndDate": "2024.08.20",
+    "StudyNotice": "퀴즈가 있습니다. 복습하세요."
+  }
+]
