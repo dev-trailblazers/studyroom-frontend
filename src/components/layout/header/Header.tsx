@@ -10,7 +10,7 @@ const Header = () => {
   const getActiveIndexFromPath = useMemo(() => {
     return (path: string): number => {
       switch (path) {
-        case '/home':
+        case '/':
           return 0;
         case '/notice':
           return 1;
@@ -45,7 +45,7 @@ const Header = () => {
   } = useNotifications(isAlarmOpen);
 
   const links = [
-    { label: '홈', path: '/home' },
+    { label: '홈', path: '/' },
     { label: '공지사항', path: '/notice' },
     { label: '알림', path: '' },
     { label: '내정보', path: '/mypage' },
@@ -148,7 +148,7 @@ const Header = () => {
       </div>
       <div className="flex items-center justify-between">
         <a
-          href="/home"
+          href="/"
           className="flex items-center gap-2"
           aria-label="홈으로 이동"
         >
