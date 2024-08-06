@@ -34,6 +34,7 @@ export default withMT({
         gray_DD: '#ddd',
         gray_CC: '#ccc',
         gray_F5: '#f5f5f5',
+        gray_77: '#777',
         white: '#fff',
         black: '#555',
       },

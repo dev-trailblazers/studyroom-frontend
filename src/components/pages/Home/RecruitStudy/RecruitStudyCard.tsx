@@ -20,19 +20,23 @@ const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
       aria-describedby="study-type study-description study-leader study-members"
       key={item.id}
     >
-      <header className="flex justify-between w-full font-semibold">
-        <h2 id="study-title" className="text-sm truncate">
+      <header className="flex items-center justify-between w-full font-semibold">
+        <h2
+          id="study-title"
+          className="w-1/2 text-lg truncate"
+          title={item.study_title}
+        >
           {item.study_title}
         </h2>
-        <p className="text-sm">{item.study_start_date}</p>
+        <p className="text-sm text-gray_77">{item.study_start_date}</p>
       </header>
       <section className="flex flex-col items-start justify-between h-full gap-3">
-        <h3 id="study-type" className="text-xs font-semibold text-gray-500">
+        <h3 id="study-type" className="text-sm font-medium text-gray_77">
           {item.study_type}
         </h3>
         <p
           id="study-description"
-          className="h-10 overflow-hidden text-sm font-semibold"
+          className="overflow-hidden text-sm font-medium"
           style={{
             display: '-webkit-box',
             WebkitBoxOrient: 'vertical',
@@ -45,7 +49,7 @@ const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
           <span
             className="flex flex-row gap-1 flex-nowrap"
             id="study-leader"
-            aria-label="스터디 모집하는 방장 이름"
+            aria-label={`스터디 방장이름: ${item.study_leader}`}
           >
             <Crown size={18} color="#FCC200" />
             {item.study_leader}
@@ -53,7 +57,7 @@ const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
           <span
             className="flex flex-row gap-1 mr-1 flex-nowrap"
             id="study-members"
-            aria-label="스터디 모집하는 인원 수"
+            aria-label={`스터디 모집하는 인원 수: ${item.study_personnel}`}
           >
             <UsersRound size={18} color="#577FA7" />
             {item.study_personnel}
@@ -62,13 +66,13 @@ const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
         <div className="flex flex-row items-center justify-center w-full gap-2 flex-nowrap">
           <button
             type="button"
-            className="w-full py-1 text-sm font-medium text-center transition duration-300 rounded-lg text-primary-700 bg-primary-100 hover:scale-95"
+            className="w-full py-2 text-sm font-medium text-center transition duration-300 rounded-lg text-primary-700 bg-primary-100 hover:scale-95"
           >
             스터디 정보
           </button>
           <button
             type="button"
-            className="w-full py-1 text-sm font-medium text-center text-white transition duration-300 rounded-lg bg-primary-800 hover:scale-95"
+            className="w-full py-2 text-sm font-medium text-center text-white transition duration-300 rounded-lg bg-primary-800 hover:scale-95"
           >
             스터디 신청
           </button>
