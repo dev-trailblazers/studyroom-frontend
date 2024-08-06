@@ -1,4 +1,4 @@
-import { Select, Button, Input } from '@components/index';
+import { Select, Button, Input } from '@/components/index';
 import { useState } from 'react';
 
 const RecruitStudyHeader = () => {

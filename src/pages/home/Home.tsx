@@ -1,4 +1,4 @@
-import { Header, InStudy, RecruitStudy } from '@components/index';
+import { Header, InStudy, RecruitStudy } from '@/components/index';
 
 const Home = () => {
   return (
