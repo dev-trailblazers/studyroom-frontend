@@ -5,3 +5,5 @@ export { default as Modal } from './common/modal/Modal';
 export { default as Header } from './layout/header/Header';
 export { default as InStudy } from './pages/home/instudy/InStudy';
 export { default as RecruitStudy } from './pages/home/recruitstudy/RecruitStudy';
+export { default as CircleButton } from './common/circlebutton/CircleButton';
+export { default as SideBar } from './layout/sidebar/SideBar';

@@ -26,7 +26,7 @@ const RecruitStudyHeader = () => {
       className="flex items-center justify-between w-full"
       id="recruit-study-header"
     >
-      <h1 className="w-full text-3xl font-semibold text-primary-600">
+      <h1 className="w-full text-3xl font-medium text-primary-600">
         모집중인 스터디
       </h1>
       <nav className="flex justify-end w-full gap-5">

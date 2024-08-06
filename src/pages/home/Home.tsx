@@ -1,4 +1,4 @@
-import { Header, InStudy, RecruitStudy } from '@/components/index';
+import { Header, InStudy, RecruitStudy, SideBar } from '@/components/index';
 
 const Home = () => {
   return (
@@ -6,6 +6,7 @@ const Home = () => {
       <Header />
       <InStudy />
       <RecruitStudy />
+      <SideBar />
     </div>
   );
 };
