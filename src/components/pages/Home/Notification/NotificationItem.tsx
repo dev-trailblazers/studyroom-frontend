@@ -12,7 +12,7 @@ export const NotificationItem = ({
 }: NotificationItemProps) => (
   <>
     {currentItems.map((notification) => (
-      <li className="py-4" key={notification.id}>
+      <li className="px-2 py-4" key={notification.id}>
         <div className="flex items-center space-x-4">
           <div className="flex-shrink-0">
             <Bell className="w-6 h-6" color="#587fa7" />

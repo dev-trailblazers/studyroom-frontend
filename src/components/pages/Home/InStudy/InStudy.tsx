@@ -2,13 +2,7 @@ import { useEffect, useState } from 'react';
 import InStudyCard from './InStudyCard';
 import InStudyContent from './InStudyContent';
 import InStudyHeader from './InStudyHeader';
-
-interface InStudyTypes {
-  id: number;
-  StudyTitle: string;
-  StudyEndDate: string;
-  StudyNotice: string;
-}
+import { InStudyTypes } from 'src/types/InStudy';
 
 const InStudy = () => {
   const [inStudies, setInStudies] = useState<InStudyTypes[]>([]);
@@ -35,7 +29,7 @@ const InStudy = () => {
 
   return (
     <section
-      className="flex flex-col w-full max-w-[1280px] p-5 m-auto my-10 rounded-xl bg-main shadow-box_03"
+      className="flex flex-col w-full max-w-[1280px] p-5 m-auto my-10 rounded-xl bg-primary-400 shadow-box_03"
       role="region"
       aria-labelledby="in-study-header"
     >

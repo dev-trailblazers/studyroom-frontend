@@ -27,8 +27,6 @@ const Select = ({
         data-value={value?.length > 0 ? 'true' : 'false'}
         onChange={setValue}
         placeholder={''}
-        onPointerEnterCapture={{}}
-        onPointerLeaveCapture={{}}
         className={`peer bg-white h-[40px] border-gray_DD odd:text-[12px] odd:pl-[16px] border ${value?.length > 0 && 'border-t-0'} aria-expanded:border-t-0 text-black`}
         containerProps={{
           className: `${className && `!min-w-0 ${className}`}`,
