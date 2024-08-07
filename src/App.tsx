@@ -3,6 +3,7 @@ import './App.css';
 import { Home, Notice, Mypage, SignIn, SignUp } from './pages';
 import { ThemeProvider } from '@material-tailwind/react';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { ModalProvider } from '@/contexts/ModalContext';
 import useApi from './apis/useApi';
 
 const AuthContext = createContext<{
@@ -54,15 +55,17 @@ function App() {
   return (
     <AuthContext.Provider value={authContextValue}>
       <ThemeProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Home />} path="/" />
-            <Route element={<Notice />} path="/notice" />
-            <Route element={<Mypage />} path="/mypage" />
-            <Route element={<SignIn />} path="/sign-in" />
-            <Route element={<SignUp />} path="/sign-up" />
-          </Routes>
-        </BrowserRouter>
+        <ModalProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<Home />} path="/" />
+              <Route element={<Notice />} path="/notice" />
+              <Route element={<Mypage />} path="/mypage" />
+              <Route element={<SignIn />} path="/sign-in" />
+              <Route element={<SignUp />} path="/sign-up" />
+            </Routes>
+          </BrowserRouter>
+        </ModalProvider>
       </ThemeProvider>
     </AuthContext.Provider>
   );

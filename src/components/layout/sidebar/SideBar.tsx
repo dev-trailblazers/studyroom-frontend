@@ -1,4 +1,4 @@
-import { CircleButton } from '@/components';
+import { CircleButton, CreateStudyModal } from '@/components';
 
 const SideBar = () => {
   return (
@@ -11,14 +11,7 @@ const SideBar = () => {
         iconSize={28}
         ariaLabel="위로 이동"
       />
-      <CircleButton
-        type="plus"
-        color="blue"
-        width="w-[48px]"
-        height="h-[48px]"
-        iconSize={28}
-        ariaLabel="스터디 그룹 생성"
-      />
+      <CreateStudyModal />
     </div>
   );
 };

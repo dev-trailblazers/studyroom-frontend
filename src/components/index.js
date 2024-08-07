@@ -7,3 +7,5 @@ export { default as InStudy } from './pages/home/instudy/InStudy';
 export { default as RecruitStudy } from './pages/home/recruitstudy/RecruitStudy';
 export { default as CircleButton } from './common/circlebutton/CircleButton';
 export { default as SideBar } from './layout/sidebar/SideBar';
+export { default as CreateStudyModal } from './pages/home/createStudyModal/CreateStudyModal';
+export { default as RecruitStudyModal } from './pages/home/recruitstudymodal/RecruitStudyModal';

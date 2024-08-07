@@ -1,3 +1,4 @@
+import { useModal } from '@/hooks/useModal';
 import { Crown, LoaderCircle, UsersRound } from 'lucide-react';
 import { RecruitStudyTypes } from 'src/types/RecruitStudy';
 interface RecruitStudyCardProps {
@@ -6,12 +7,18 @@ interface RecruitStudyCardProps {
 }
 
 const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
+  const { openModal } = useModal('studyInfoModal');
+
   if (loading)
     return (
       <span className="absolute top-1/2 left-1/2">
         <LoaderCircle className="animate-spin" color="#587fa7" size={64} />
       </span>
     );
+
+  const handleOpenStudyInfo = () => {
+    openModal();
+  };
 
   return data.map((item) => (
     <li
@@ -67,6 +74,7 @@ const RecruitStudyCard = ({ loading, data }: RecruitStudyCardProps) => {
           <button
             type="button"
             className="w-full py-2 text-sm font-medium text-center transition duration-300 rounded-lg text-primary-700 bg-primary-100 hover:scale-95"
+            onClick={handleOpenStudyInfo}
           >
             스터디 정보
           </button>

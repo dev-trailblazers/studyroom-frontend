@@ -3,6 +3,7 @@ import RecruitStudyHeader from './RecruitStudyHeader';
 import RecruitStudyContent from './RecruitStudyContent';
 import RecruitStudyCard from './RecruitStudyCard';
 import { RecruitStudyTypes } from 'src/types/RecruitStudy';
+import RecruitStudyModal from '../recruitstudymodal/RecruitStudyModal';
 
 const RecruitStudy = () => {
   const [recruitStudies, setRecruitStudies] = useState<RecruitStudyTypes[]>([]);
@@ -36,6 +37,7 @@ const RecruitStudy = () => {
       <RecruitStudyHeader />
       <RecruitStudyContent>
         <RecruitStudyCard data={recruitStudies} loading={loading} />
+        <RecruitStudyModal />
       </RecruitStudyContent>
     </section>
   );
