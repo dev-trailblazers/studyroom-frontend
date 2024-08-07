@@ -19,12 +19,9 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "allowJs": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@hooks/*": ["src/hooks/*"],
-      "@components/*": ["src/components/*"],
-      "@pages/*": ["src/pages/*"]
-      // 추가 경로 필요시 여기에 작성
+      "@/*": ["src/*"]
     }
   },
   "include": ["src", "src/svg.d.ts"],

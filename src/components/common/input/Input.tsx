@@ -26,9 +26,19 @@ const Input = ({
   isError = false,
   error = '잘못된 입력값입니다.',
 }: InputProps) => {
+  // focus 여부
+  const [isFocused, setIsFocused] = useState(false);
   // type='password'일 경우, 보이기/숨기기 버튼 추가
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const isPasswordType = type === 'password';
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
 
   // 비밀번호 보이기/숨기기
   const togglePasswordVisibility = (event: any) => {
@@ -38,6 +48,65 @@ const Input = ({
 
   return (
     <>
+      {/* <div
+        className={`${styles.input__box} ${isFocused ? styles.focused : ''} ${value ? styles.not__empty : ''} ${isInvalid ? styles.invalid__input__box : ''} ${isCorrect ? styles.correct__input__box : ''}`}
+      >
+        <input
+          className={`${styles.input}`}
+          disabled={disabled}
+          type={type}
+          value={value}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onChange={onChange}
+          style={{ textAlign: align }}
+          pattern={isTypeTel ? '010-[0-9]{4}-[0-9]{4}' : pattern}
+          maxLength={isTypeTel ? 13 : maxLength}
+          onInput={autoHypenPhone}
+        />
+        <span className={styles.placeholder}>{placeholder}</span>
+        {isButton && (
+          <div className={styles.button}>
+            <Button
+              text={buttonText}
+              onClick={buttonOnClick}
+              fontColor="gray"
+              height="33px"
+              fontSize="14px"
+              borderRadius="8px"
+            />
+          </div>
+        )}
+      </div> */}
+      <div
+        className={`relative w-full h-[56px] box-border px-[22px] py-[11px] border border-gray-700 rounded-md bg-white ${isFocused ? 'border-2 border-gray-700' : ''}`}
+      >
+        <input
+          type="text"
+          id="a"
+          className="w-full p-[10px] box-border bg-transparent outline-none focus:border-none"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+        <label
+          htmlFor="a"
+          className="absolute top-[50%] left-[10px] translate-y-[50%] transition-all text-gray-700 pointer-events-none px-[22px]"
+        >
+          placeholder
+        </label>
+        {/* {isButton && (
+          <div className={styles.button}>
+            <Button
+              text={buttonText}
+              onClick={buttonOnClick}
+              fontColor="gray"
+              height="33px"
+              fontSize="14px"
+              borderRadius="8px"
+            />
+          </div>
+        )} */}
+      </div>
       <div className="relative flex w-full max-w-[24rem]">
         <CustomInput
           id={id}

@@ -73,8 +73,12 @@ const SignIn = () => {
     formData.append('username', username);
     formData.append('password', password);
 
-    return await post({
-      params: '/login',
+    // return await fetch({
+    //   params: '/login',
+    //   body: formData,
+    // });
+    return await fetch(`/api/login`, {
+      method: 'POST',
       body: formData,
     });
   };
@@ -116,7 +120,18 @@ const SignIn = () => {
 
   // 카카오 로그인
   const onSignInKakao = async () => {
-    window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_API_URL}/oauth2/authorization/kakao`;
+    try {
+      // window.location.href = `${import.meta.env.VITE_KAKAO_AUTH_API_URL}/oauth2/authorization/kakao`;
+      const response = await fetch('/api/oauth2/authorization/kakao', {
+        method: 'GET',
+      });
+      const json = await response.json();
+      console.log(response);
+      console.log(json);
+    } catch (error) {
+      console.log(JSON.stringify(error));
+      console.log(error);
+    }
   };
 
   return (

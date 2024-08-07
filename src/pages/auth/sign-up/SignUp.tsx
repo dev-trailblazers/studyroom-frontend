@@ -184,7 +184,7 @@ const SignUp = () => {
 
     try {
       const duplicatedResult = await post({
-        params: '/member/join/username',
+        params: '/api/v1/member/username',
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -219,7 +219,7 @@ const SignUp = () => {
       restartTimer();
 
       await post({
-        params: '/auth/new/email',
+        params: '/api/v1/auth/new/email',
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -266,7 +266,7 @@ const SignUp = () => {
 
     try {
       const isCheckCertify = await post({
-        params: '/auth/verify/email',
+        params: '/api/v1/auth/verify/email',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -288,6 +288,7 @@ const SignUp = () => {
     }
   };
 
+  // ! TODO 테스트 해보기
   // 회원가입
   const onSignUp = async () => {
     try {
@@ -318,7 +319,7 @@ const SignUp = () => {
       }
 
       await post({
-        params: '/member/join',
+        params: '/api/v1/member/join',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -329,6 +330,8 @@ const SignUp = () => {
           name,
           birth,
           gender,
+          profileImage: '',
+          joinPlatform: 'BASIC',
         }),
       });
 
