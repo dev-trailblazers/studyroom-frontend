@@ -158,7 +158,7 @@ const Header = () => {
           <img src="/logo.svg" alt="logo" />
         </a>
         <nav
-          className="flex flex-row items-center w-[500px] h-[60px] rounded-md bg-blue_02 shadow-md"
+          className="flex flex-row items-center w-[500px] h-[60px] rounded-md bg-primary-400 shadow-md"
           role="group"
           aria-labelledby="navigation-title"
         >
