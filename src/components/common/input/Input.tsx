@@ -48,66 +48,49 @@ const Input = ({
 
   return (
     <>
-      {/* <div
-        className={`${styles.input__box} ${isFocused ? styles.focused : ''} ${value ? styles.not__empty : ''} ${isInvalid ? styles.invalid__input__box : ''} ${isCorrect ? styles.correct__input__box : ''}`}
+      <div
+        className={`relative w-full h-[44px] box-border px-[8px] py-[4px] border ${
+          isFocused ? 'border border-[#aaaaaa]' : 'border border-[#cccccc]'
+        } rounded-lg bg-white `}
       >
         <input
-          className={`${styles.input}`}
+          className={`w-full p-[10px] box-border border-none bg-transparent outline-none text-[14px] text-gray-900 ${
+            disabled ? 'text-gray-400' : ''
+          }`}
           disabled={disabled}
-          type={type}
           value={value}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          id={id}
+          data-value={value ? 'true' : 'false'}
+          type={isPasswordType && isPasswordVisible ? 'text' : type}
           onChange={onChange}
-          style={{ textAlign: align }}
-          pattern={isTypeTel ? '010-[0-9]{4}-[0-9]{4}' : pattern}
-          maxLength={isTypeTel ? 13 : maxLength}
-          onInput={autoHypenPhone}
+          onKeyPress={onKeyPress}
         />
-        <span className={styles.placeholder}>{placeholder}</span>
-        {isButton && (
-          <div className={styles.button}>
-            <Button
-              text={buttonText}
-              onClick={buttonOnClick}
-              fontColor="gray"
-              height="33px"
-              fontSize="14px"
-              borderRadius="8px"
-            />
-          </div>
-        )}
-      </div> */}
-      <div
-        className={`relative w-full h-[56px] box-border px-[22px] py-[11px] border border-gray-700 rounded-md bg-white ${isFocused ? 'border-2 border-gray-700' : ''}`}
-      >
-        <input
-          type="text"
-          id="a"
-          className="w-full p-[10px] box-border bg-transparent outline-none focus:border-none"
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-        <label
-          htmlFor="a"
-          className="absolute top-[50%] left-[10px] translate-y-[50%] transition-all text-gray-700 pointer-events-none px-[22px]"
+        <span
+          className={`absolute left-[14px] transition-all duration-200 ease-in-out transform  ${
+            isFocused || value
+              ? '-translate-y-[2px] text-[10px] top-1'
+              : 'translate-y-[0%] top-[25%] text-[14px]'
+          } text-[#cccccc] pointer-events-none `}
         >
-          placeholder
-        </label>
-        {/* {isButton && (
-          <div className={styles.button}>
-            <Button
-              text={buttonText}
-              onClick={buttonOnClick}
-              fontColor="gray"
-              height="33px"
-              fontSize="14px"
-              borderRadius="8px"
-            />
-          </div>
-        )} */}
+          {label}
+        </span>
+        {isPasswordType && (
+          <button
+            onClick={togglePasswordVisibility}
+            className="!absolute right-2 top-0 bottom-0 rounded w-[20px] align-middle flex items-center justify-center "
+          >
+            <span className="material-symbols-outlined text-[20px] text-gray-300">
+              {isPasswordVisible ? 'visibility' : 'visibility_off'}
+            </span>
+          </button>
+        )}
       </div>
-      <div className="relative flex w-full max-w-[24rem]">
+      {isError && (
+        <span className="text-[11px] text-red-400 px-2">{error}</span>
+      )}
+      {/* <div className="relative flex w-full max-w-[24rem]">
         <CustomInput
           id={id}
           data-value={value ? 'true' : 'false'}
@@ -129,20 +112,7 @@ const Input = ({
             className: `peer-placeholder-shown:text-gray_DD peer-placeholder-shown:!text-[12px] peer-placeholder-shown:!pl-1 peer-placeholder-shown:!pt-1 peer-focus:!text-[11px] peer-focus:!pt-0 peer-focus:!pl-0 peer-focus:!text-[#9e9e9e] before:border-gray_DD after:border-gray_DD  peer-focus:before:!border-t peer-focus:before:!border-l peer-focus:before:!border-gray_DD  peer-focus:after:!border-t peer-focus:after:!border-r  peer-focus:after:!border-gray_DD`,
           }}
         />
-        {isPasswordType && (
-          <button
-            onClick={togglePasswordVisibility}
-            className="!absolute right-2 top-0 bottom-0 rounded w-[20px] align-middle flex items-center justify-center "
-          >
-            <span className="material-symbols-outlined text-[20px] text-gray-300">
-              {isPasswordVisible ? 'visibility' : 'visibility_off'}
-            </span>
-          </button>
-        )}
-      </div>
-      {isError && (
-        <span className="text-[11px] text-red-400 px-2">{error}</span>
-      )}
+      </div> */}
     </>
   );
 };
