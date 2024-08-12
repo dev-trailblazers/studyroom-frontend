@@ -129,6 +129,10 @@ const SignUp = () => {
     disappearError('code');
   }, [userInfo.code]);
 
+  useEffect(() => {
+    console.log(userInfo);
+  }, [userInfo]);
+
   // 인증번호 입력 모달 on/off 시 모달에 쓰이는 데이터 초기화
   useEffect(() => {
     setUserInfoError((prev) => ({ ...prev, code: false }));
