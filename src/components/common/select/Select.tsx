@@ -1,4 +1,3 @@
-import { Select as CustomSelect, Option } from '@material-tailwind/react';
 import { useState } from 'react';
 
 interface SelectProps {

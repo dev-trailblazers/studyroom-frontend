@@ -1,4 +1,3 @@
-import { Input as CustomInput } from '@material-tailwind/react';
 import { useState } from 'react';
 
 interface InputProps {
