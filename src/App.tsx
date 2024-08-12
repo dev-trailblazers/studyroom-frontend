@@ -2,13 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import { Home, Notice, Mypage, SignIn, SignUp } from './pages';
 import { ThemeProvider } from '@material-tailwind/react';
-import { CookiesProvider } from 'react-cookie';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { ModalProvider } from '@/contexts/ModalContext';
 import useApi from './apis/useApi';
-
-const queryClient = new QueryClient();
 
 const AuthContext = createContext<{
   accessToken: string | null;
@@ -57,22 +53,9 @@ function App() {
   };
 
   return (
-    <CookiesProvider>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Home />} path="/home" />
-            <Route element={<Notice />} path="/notice" />
-            <Route element={<Mypage />} path="/mypage" />
-            <Route element={<SignIn />} path="/sign-in" />
-            <Route element={<SignUp />} path="/sign-up" />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </CookiesProvider>
     <AuthContext.Provider value={authContextValue}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+      <ThemeProvider>
+        <ModalProvider>
           <BrowserRouter>
             <Routes>
               <Route element={<Home />} path="/" />
@@ -82,9 +65,8 @@ function App() {
               <Route element={<SignUp />} path="/sign-up" />
             </Routes>
           </BrowserRouter>
-        </ThemeProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+        </ModalProvider>
+      </ThemeProvider>
     </AuthContext.Provider>
   );
 }
