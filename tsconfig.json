@@ -22,7 +22,6 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-      // 추가 경로 필요시 여기에 작성
     }
   },
   "include": ["src", "src/svg.d.ts"],
