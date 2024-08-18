@@ -9,6 +9,7 @@ import Logo from '../../../assets/logo.png';
 import { useTimer } from 'react-timer-hook';
 import { checkEmptyObject, updateObjectState } from '../../../utils';
 import useApi from '../../../apis/useApi';
+import { useModal } from '@/hooks/useModal';
 
 interface SignUp {
   username: string;
@@ -70,6 +71,7 @@ const initialUserInfoError = {
 const SignUp = () => {
   const navigate = useNavigate();
   const { post } = useApi();
+  const { openModal, closeModal } = useModal('verifyEmail');
 
   // 인증번호 유효시간을 위한 TIME
   const expiryTimestamp = new Date();
@@ -91,9 +93,6 @@ const SignUp = () => {
   const [isDuplicated, setIsDuplicated] = useState<boolean | null>(null);
 
   const [isCertifing, setIsCertifing] = useState(false);
-
-  // 인증번호 입력 모달 ON/OFF
-  const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
   useEffect(() => {
     disappearError('username');
@@ -137,7 +136,7 @@ const SignUp = () => {
   useEffect(() => {
     setUserInfoError((prev) => ({ ...prev, code: false }));
     setUserInfo((prev) => ({ ...prev, code: '' }));
-  }, [isCertifyOpen]);
+  }, [openModal, closeModal]);
 
   // 사용자 정보 입력 시 에러 메시지 사라지게 하는 함수
   const disappearError = (field: string) => {
@@ -251,7 +250,7 @@ const SignUp = () => {
     }
 
     onCertifyEmail();
-    setIsCertifyOpen((prev) => !prev);
+    openModal();
   };
 
   // 인증번호 서버로 보내기
@@ -280,7 +279,7 @@ const SignUp = () => {
       const isCheckCertifyJson = await isCheckCertify.json();
 
       if (isCheckCertifyJson) {
-        setIsCertifyOpen(false);
+        closeModal();
         setIsCertifing(true);
         pause();
       } else {
@@ -448,7 +447,7 @@ const SignUp = () => {
                   </div>
                   <div className="w-1/4">
                     <Button
-                      disabled={isCertifing && !isCertifyOpen}
+                      disabled={isCertifing}
                       blueType="dark"
                       text="인증"
                       onClick={onToggleCertifyModal}
@@ -519,18 +518,13 @@ const SignUp = () => {
           <section className="w-[480px] h-[230px] bg-black rounded-2xl"></section>
         </div>
       </div>
-      <Modal
-        title="이메일 인증"
-        isOpen={isCertifyOpen}
-        onClose={onToggleCertifyModal}
-        width={350}
-        height={200}
-      >
+      <Modal name="verifyEmail" width="w-[350px]" height="h-[200px]">
         <div
-          className={`flex flex-col ${userInfoError.code ? 'gap-1' : 'gap-4'}`}
+          className={`flex flex-col ${userInfoError.code ? 'gap-1' : 'gap-4'} p-[16px]`}
         >
-          <div>
-            <div className="relative w-full flex flex-col gap-1">
+          <div className="text-center">
+            <span className="text-[24px] font-bold ">이메일 인증</span>
+            <div className="relative w-full flex flex-col gap-1 mt-4">
               <Input
                 label="인증번호"
                 value={userInfo.code}
