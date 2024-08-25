@@ -1,54 +1,69 @@
-import { CircleButton, Modal } from '@/components';
+import { Input, Modal } from '@/components';
 import { useModal } from '@/hooks/useModal';
+import { useState } from 'react';
 
 const CreateStudyModal = () => {
-  const { openModal, closeModal } = useModal('createStudy');
-  const { openModal: openNestedModal, closeModal: closeNestedModal } =
-    useModal('nestedModal');
+  const { closeModal } = useModal('createStudy');
+  const [studyTitle, setStudyTitle] = useState('');
+  const [studyGoal, setStudyGoal] = useState('');
+  const [studyPersonnel, setStudyPersonnel] = useState('');
 
   return (
-    <>
-      <CircleButton
-        type="plus"
-        color="blue"
-        width="w-[48px]"
-        height="h-[48px]"
-        iconSize={28}
-        ariaLabel="스터디 그룹 생성"
-        onClick={openModal}
-      />
-
-      <Modal name="createStudy" width="w-[600px]" height="h-[400px]">
-        <div className="p-6">
-          <h1 className="mb-4 text-2xl font-bold">Create Study Group</h1>
+    <Modal
+      name="createStudy"
+      width="w-[350px]"
+      height="h-[550px]"
+      closeOnOverlayClick={false}
+    >
+      <div className="relative flex flex-col h-full p-8 text-center">
+        <h1 className="mb-4 text-2xl font-bold">스터디 생성</h1>
+        <Input
+          id="study-title"
+          type="text"
+          label="스터디 제목"
+          value={studyTitle}
+          onChange={(e) => setStudyTitle(e.target.value)}
+          className="mb-4"
+        />
+        <Input
+          id="study-Goal"
+          type="text"
+          label="스터디 목표"
+          value={studyGoal}
+          onChange={(e) => setStudyGoal(e.target.value)}
+          className="mb-4"
+        />
+        <Input
+          id="study-Personnel"
+          type="text"
+          label="스터디 최대인원"
+          value={studyPersonnel}
+          onChange={(e) => setStudyPersonnel(e.target.value)}
+          className="mb-4"
+        />
+        <textarea
+          className="h-[200px] border rounded border-gray_CC py-2 px-4 text-sm resize-none outline-none focus:border-gray_AA"
+          name="study-description"
+          id="study-description"
+          placeholder="스터디 소개글"
+        ></textarea>
+        <div className="absolute flex gap-5 font-medium bottom-8 right-14">
           <button
-            className="px-4 py-2 text-white bg-blue-500 rounded"
-            onClick={openNestedModal}
-          >
-            Open Nested Modal
-          </button>
-          <button
-            className="px-4 py-2 ml-4 text-white bg-red-500 rounded"
+            type="button"
+            className="px-10 py-2 border rounded text-primary-700 border-primary-100 bg-primary-100"
             onClick={closeModal}
           >
-            Close
+            닫기
           </button>
-        </div>
-      </Modal>
-
-      <Modal name="nestedModal" width="w-[400px]" height="h-[300px]">
-        <div className="p-6">
-          <h2 className="mb-4 text-xl font-bold">Nested Modal</h2>
-          <p>This is a nested modal inside the Create Study Group modal.</p>
           <button
-            className="px-4 py-2 ml-4 text-white bg-red-500 rounded"
-            onClick={closeNestedModal}
+            type="submit"
+            className="px-10 py-2 text-white border rounded bg-primary-700 border-primary-700"
           >
-            Close
+            생성
           </button>
         </div>
-      </Modal>
-    </>
+      </div>
+    </Modal>
   );
 };
 

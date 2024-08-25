@@ -48,12 +48,12 @@ const Input = ({
   return (
     <>
       <div
-        className={`relative w-full h-[44px] box-border px-[8px] py-[4px] border ${
+        className={`relative w-full h-[48px] box-border px-2 py-1 border ${
           isFocused ? 'border border-[#aaaaaa]' : 'border border-[#cccccc]'
         } rounded-lg bg-white ${className}`}
       >
         <input
-          className={`w-full p-[10px] px-[8px] box-border border-none bg-transparent outline-none text-[14px] text-gray-900 ${
+          className={`w-full py-[18px] px-[2px] border-none bg-transparent outline-none text-sm text-gray-900 ${
             disabled ? 'text-gray-400' : ''
           }`}
           disabled={disabled}
@@ -66,15 +66,15 @@ const Input = ({
           onChange={onChange}
           onKeyPress={onKeyPress}
         />
-        <span
-          className={`absolute left-[14px] transition-all duration-200 ease-in-out transform  ${
+        <label
+          className={`absolute left-2.5 top-1 transition-all duration-300 ease-in-out transform  ${
             isFocused || value
-              ? '-translate-y-[2px] text-[10px] top-1'
-              : 'translate-y-[0%] top-[25%] text-[14px]'
-          } text-[#cccccc] pointer-events-none `}
+              ? '-translate-y-[2px] text-xs top-2 left-2'
+              : 'translate-y-[0%] top-3.5 text-sm'
+          } text-gray_77 pointer-events-none `}
         >
           {label}
-        </span>
+        </label>
         {isPasswordType && (
           <button
             onClick={togglePasswordVisibility}
