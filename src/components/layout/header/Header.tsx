@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Notification } from '@/components/pages/Home/Notification/Notification';
+import { Notification } from '@/components/pages/home/notification/Notification';
 import { useNotifications } from '@/hooks/useNotifications';
 
 const Header = () => {

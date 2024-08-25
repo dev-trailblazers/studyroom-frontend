@@ -19,8 +19,8 @@ const InStudyCard = ({ loading, data }: InStudyCardProps) => {
       className="flex flex-col h-full gap-4 p-5 bg-white rounded-2xl shadow-box_03"
       key={item.id}
     >
-      <header className="flex items-center justify-between font-semibold">
-        <h2 className="text-lg">{item.StudyTitle}</h2>
+      <header className="flex items-center justify-between gap-10 font-semibold">
+        <h2 className="text-lg truncate">{item.StudyTitle}</h2>
         <time className="text-sm text-gray_77" dateTime="2024-08-05">
           {item.StudyEndDate}
         </time>
