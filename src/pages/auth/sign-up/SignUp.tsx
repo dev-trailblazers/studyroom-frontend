@@ -2,18 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button, Input, Modal, Select } from '../../../components';
-import { Gender } from '../../../data/Gender';
+import { Gender } from '../../../data';
 
 import Logo from '../../../assets/logo.png';
 
 import { useTimer } from 'react-timer-hook';
-import { checkEmptyObjectInput, onChangeObjectInput } from '../../../utils';
-
-interface UserInfo extends SignUp {
-  passwordCheck: string;
-  code: string;
-  [key: string]: string;
-}
+import { checkEmptyObject, updateObjectState } from '../../../utils';
+import useApi from '../../../apis/useApi';
+import { useModal } from '@/hooks/useModal';
 
 interface SignUp {
   username: string;
@@ -22,6 +18,12 @@ interface SignUp {
   name: string;
   birth: string;
   gender: string;
+}
+
+interface UserInfo extends SignUp {
+  passwordCheck: string;
+  code: string;
+  [key: string]: string;
 }
 
 interface UserInfoError {
@@ -37,15 +39,21 @@ interface UserInfoError {
 }
 
 const initialUserInfo = {
-  username: '',
-  password: '',
-  passwordCheck: '',
-  email: '',
-  name: '',
-  birth: '',
-  gender: '',
+  // username: '',
+  // password: '',
+  // passwordCheck: '',
+  // email: '',
+  // name: '',
+  // birth: '',
+  // gender: '',
+  username: 'test123',
+  password: 'Test123$',
+  passwordCheck: 'Test123$',
+  email: 'tlstjsdud566@gmail.com',
+  name: '홍길동',
+  birth: '1995-05-06',
+  gender: 'M',
   code: '',
-  // education: '',
 };
 
 const initialUserInfoError = {
@@ -62,25 +70,29 @@ const initialUserInfoError = {
 // 학력은 출시 전에 추가, 현재는 이름, 나이를 text로 받으나 나중에는 변경할 수도 있음
 const SignUp = () => {
   const navigate = useNavigate();
+  const { post } = useApi();
+  const { openModal, closeModal } = useModal('verifyEmail');
 
+  // 인증번호 유효시간을 위한 TIME
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + 300);
   const { seconds, minutes, pause, restart } = useTimer({
     expiryTimestamp,
     autoStart: false,
-    onExpire: () => console.warn('onExpire called'),
+    onExpire: () =>
+      alert(
+        '인증 번호 입력 유효시간이 만료되었습니다. 재전송 하시길 바랍니다. '
+      ),
   });
 
   const [userInfo, setUserInfo] = useState<UserInfo>(initialUserInfo);
   const [userInfoError, setUserInfoError] =
     useState<UserInfoError>(initialUserInfoError);
 
+  // 아이디 중복 확인 여부 (null: 중복 확인 전, true: 중복, false: 중복 아님)
   const [isDuplicated, setIsDuplicated] = useState<boolean | null>(null);
 
   const [isCertifing, setIsCertifing] = useState(false);
-
-  // 인증번호 입력 모달뮬
-  const [isCertifyOpen, setIsCertifyOpen] = useState(false);
 
   useEffect(() => {
     disappearError('username');
@@ -88,28 +100,12 @@ const SignUp = () => {
 
   // 패스워드 유효성 검사
   useEffect(() => {
-    if (userInfo.password.length !== 0) {
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,16}$/;
-      setUserInfoError((prev) => ({
-        ...prev,
-        password: !passwordRegex.test(userInfo.password) ? true : false,
-      }));
-    }
+    validatePassword();
   }, [userInfo.password]);
 
   // 패스워드와 패스워드 확인 값이 일치 여부 검사
   useEffect(() => {
-    if (userInfo.passwordCheck.length !== 0) {
-      setUserInfoError((prev) => ({
-        ...prev,
-        passwordCheck:
-          userInfo.passwordCheck.length !== 0 &&
-          userInfo.password !== userInfo.passwordCheck
-            ? true
-            : false,
-      }));
-    }
+    validatePasswordCheck();
   }, [userInfo.passwordCheck]);
 
   useEffect(() => {
@@ -132,13 +128,17 @@ const SignUp = () => {
     disappearError('code');
   }, [userInfo.code]);
 
+  useEffect(() => {
+    console.log(userInfo);
+  }, [userInfo]);
+
   // 인증번호 입력 모달 on/off 시 모달에 쓰이는 데이터 초기화
   useEffect(() => {
     setUserInfoError((prev) => ({ ...prev, code: false }));
     setUserInfo((prev) => ({ ...prev, code: '' }));
-  }, [isCertifyOpen]);
+  }, [openModal, closeModal]);
 
-  // Input 유효성 에러 발생 -> onChange 시 사라짐
+  // 사용자 정보 입력 시 에러 메시지 사라지게 하는 함수
   const disappearError = (field: string) => {
     const newUserInfoObject = { ...userInfo };
 
@@ -153,39 +153,59 @@ const SignUp = () => {
     }
   };
 
+  // 패스워드 유효성 검사
+  const validatePassword = () => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!]).{8,16}$/;
+    setUserInfoError((prev) => ({
+      ...prev,
+      password:
+        userInfo.password.length !== 0 &&
+        !passwordRegex.test(userInfo.password),
+    }));
+  };
+
+  // 패스워드와 패스워드 확인 값이 일치 여부 검사
+  const validatePasswordCheck = () => {
+    setUserInfoError((prev) => ({
+      ...prev,
+      passwordCheck:
+        userInfo.passwordCheck.length !== 0 &&
+        userInfo.password !== userInfo.passwordCheck,
+    }));
+  };
+
   // 아이디 중복 확인(아이디는 3~16자 소문자+숫자로만 이루어짐)
   // 비밀번호 8 ~ 16자 대문자+소문자+숫자+특수문자(키패드 1번 ~ 7번까지만 '+', '=')로만 이루어짐
   // 비밀번호 유효성 검사는 backend에서 적용한 정규식 참고하면 됨
   const onCheckDuplicatedId = async () => {
-    try {
-      const usernameRegex = /^(?=.*[a-z])(?=.*[0-9])[a-z0-9]{3,16}$/;
-      if (!usernameRegex.test(userInfo.username)) {
-        setUserInfoError((prev) => ({ ...prev, username: true }));
-        return;
-      }
+    const usernameRegex = /^(?=.*[a-z])(?=.*[0-9])[a-z0-9]{3,16}$/;
+    if (!usernameRegex.test(userInfo.username)) {
+      setUserInfoError((prev) => ({ ...prev, username: true }));
+      return;
+    }
 
-      const response = await fetch(`/api/member/username`, {
-        method: 'POST',
-        credentials: 'include',
+    try {
+      const duplicatedResult = await post({
+        params: '/api/v1/member/username',
         headers: {
           'Content-Type': 'text/plain',
         },
         body: userInfo.username,
       });
-      const duplicatedResult = await response.json();
 
-      if (duplicatedResult) {
-        alert('이미 사용중인 아이디입니다.');
-      } else {
-        alert('사용 가능한 아이디입니다.');
-      }
+      const duplicatedJson = await duplicatedResult.json();
 
-      setIsDuplicated(duplicatedResult);
-    } catch (error: any) {
-      if (error.name === 'SyntaxError') {
-        alert('중복 확인 실패했습니다.');
-      }
-      console.log(error.name);
+      alert(
+        duplicatedJson
+          ? '이미 사용중인 아이디입니다.'
+          : '사용 가능한 아이디입니다.'
+      );
+
+      setIsDuplicated(duplicatedJson);
+    } catch (error) {
+      alert('중복 확인 실패했습니다.');
+      console.log(error);
     }
   };
 
@@ -200,9 +220,9 @@ const SignUp = () => {
   const onCertifyEmail = async () => {
     try {
       restartTimer();
-      await fetch(`/api/auth/new/email`, {
-        method: 'POST',
-        credentials: 'include',
+
+      await post({
+        params: '/api/v1/auth/new/email',
         headers: {
           'Content-Type': 'text/plain',
         },
@@ -216,8 +236,6 @@ const SignUp = () => {
   // 이메일로 인증번호 재전송
   const onResendCertifyEmail = async () => {
     alert('재전송 되었습니다.');
-
-    restartTimer();
     await onCertifyEmail();
   };
 
@@ -232,38 +250,36 @@ const SignUp = () => {
     }
 
     onCertifyEmail();
-
-    setIsCertifyOpen((prev) => !prev);
+    openModal();
   };
 
   // 인증번호 서버로 보내기
   const onSendCertifyNumber = async () => {
+    if (minutes === 0 && seconds === 0) {
+      alert('입력 시간이 지났습니다. 인증번호 재전송 후 다시 입력해 주세요.');
+      return;
+    }
+
+    const { email, code } = userInfo;
+
+    if (code.length === 0) {
+      setUserInfoError((prev) => ({ ...prev, code: true }));
+      return;
+    }
+
     try {
-      if (minutes === 0 && seconds === 0) {
-        alert('입력 시간이 지났습니다. 인증번호 재전송 후 다시 입력해 주세요.');
-        return;
-      }
-
-      const { email, code } = userInfo;
-
-      if (code.length === 0) {
-        setUserInfoError((prev) => ({ ...prev, code: true }));
-        return;
-      }
-
-      const response = await fetch(`/api/auth/email`, {
-        method: 'POST',
-        credentials: 'include',
+      const isCheckCertify = await post({
+        params: '/api/v1/auth/verify/email',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, code }),
       });
-      const isCheckCertify = await response.json();
 
-      if (isCheckCertify) {
-        setIsCertifyOpen(false);
-        setUserInfoError((prev) => ({ ...prev, code: false }));
+      const isCheckCertifyJson = await isCheckCertify.json();
+
+      if (isCheckCertifyJson) {
+        closeModal();
         setIsCertifing(true);
         pause();
       } else {
@@ -275,13 +291,23 @@ const SignUp = () => {
     }
   };
 
+  // ! TODO 테스트 해보기
   // 회원가입
   const onSignUp = async () => {
     try {
       const { username, password, passwordCheck, name, email, birth, gender } =
         userInfo;
 
-      if (checkEmptyObjectInput(userInfo, setUserInfoError)) {
+      if (
+        checkEmptyObject(
+          { username, password, passwordCheck, name, email, birth, gender },
+          setUserInfoError
+        )
+      )
+        return;
+
+      if (isDuplicated || isDuplicated === null) {
+        alert('아이디 중복 확인 과정을 진행해 주세요.');
         return;
       }
 
@@ -290,20 +316,15 @@ const SignUp = () => {
         return;
       }
 
-      if (isDuplicated || isDuplicated === null) {
-        alert('아이디 중복 확인 과정을 진행해 주세요.');
-        return;
-      }
-
       if (!isCertifing) {
         alert('이메일 인증 과정을 진행해 주세요.');
         return;
       }
 
-      await fetch(`/api/member/join`, {
-        method: 'POST',
+      await post({
+        params: '/api/v1/member/join',
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           username,
@@ -312,12 +333,14 @@ const SignUp = () => {
           name,
           birth,
           gender,
+          profileImage: '',
+          joinPlatform: 'BASIC',
         }),
       });
 
       alert('회원가입 되었습니다.');
       navigate('/sign-in');
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
     }
   };
@@ -355,20 +378,13 @@ const SignUp = () => {
                         label="아이디"
                         value={userInfo.username}
                         onChange={(event) =>
-                          onChangeObjectInput(
-                            userInfo,
-                            setUserInfo,
-                            event.target.value,
-                            'username'
-                          )
+                          updateObjectState(setUserInfo, {
+                            username: event.target.value,
+                          })
                         }
+                        isError={userInfoError.username}
+                        error="아이디는 영소문자와 숫자를 하나씩 포함한 3~16자리입니다."
                       />
-                      {userInfoError.username && (
-                        <span className="text-[11px] text-red-400 px-2">
-                          아이디는 영소문자와 숫자를 하나씩 포함한
-                          3~16자리입니다.
-                        </span>
-                      )}
                     </div>
                   </div>
                   <div className="w-1/4">
@@ -387,20 +403,13 @@ const SignUp = () => {
                     label="비밀번호"
                     value={userInfo.password}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'password'
-                      )
+                      updateObjectState(setUserInfo, {
+                        password: event.target.value,
+                      })
                     }
+                    isError={userInfoError.password}
+                    error="비밀번호는 영문 대소문자와 숫자, 특수문자를 하나씩 포함한 8~16자리입니다."
                   />
-                  {userInfoError.password && (
-                    <span className="text-[11px] text-red-400 px-2">
-                      비밀번호는 영문 대소문자와 숫자, 특수문자를 하나씩 포함한
-                      8~16자리입니다.
-                    </span>
-                  )}
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <Input
@@ -409,19 +418,13 @@ const SignUp = () => {
                     label="비밀번호 확인"
                     value={userInfo.passwordCheck}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'passwordCheck'
-                      )
+                      updateObjectState(setUserInfo, {
+                        passwordCheck: event.target.value,
+                      })
                     }
+                    isError={userInfoError.passwordCheck}
+                    error="비밀번호가 일치하지 않습니다."
                   />
-                  {userInfoError.passwordCheck && (
-                    <span className="text-[11px] text-red-400 px-2">
-                      비밀번호가 일치하지 않습니다.
-                    </span>
-                  )}
                 </div>
                 <div className="w-full flex gap-2">
                   <div className="w-3/4">
@@ -433,24 +436,18 @@ const SignUp = () => {
                         label="이메일"
                         value={userInfo.email}
                         onChange={(event) =>
-                          onChangeObjectInput(
-                            userInfo,
-                            setUserInfo,
-                            event.target.value,
-                            'email'
-                          )
+                          updateObjectState(setUserInfo, {
+                            email: event.target.value,
+                          })
                         }
+                        isError={userInfoError.email}
+                        error="이메일 형식에 맞게 입력해 주세요."
                       />
-                      {userInfoError.email && (
-                        <span className="text-[11px] text-red-400 px-2">
-                          이메일 형식에 맞게 입력해 주세요.
-                        </span>
-                      )}
                     </div>
                   </div>
                   <div className="w-1/4">
                     <Button
-                      disabled={isCertifing && !isCertifyOpen}
+                      disabled={isCertifing}
                       blueType="dark"
                       text="인증"
                       onClick={onToggleCertifyModal}
@@ -460,24 +457,18 @@ const SignUp = () => {
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <Input
-                    id="name"
+                    id="nanme"
                     type="text"
                     label="이름"
                     value={userInfo.name}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'name'
-                      )
+                      updateObjectState(setUserInfo, {
+                        name: event.target.value,
+                      })
                     }
+                    isError={userInfoError.name}
+                    error="유효한 이름을 입력해 주세요."
                   />
-                  {userInfoError.name && (
-                    <span className="text-[11px] text-red-400 px-2">
-                      유효한 이름을 입력해 주세요.
-                    </span>
-                  )}
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <Input
@@ -485,46 +476,25 @@ const SignUp = () => {
                     label="나이"
                     value={userInfo.birth}
                     onChange={(event) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        event.target.value,
-                        'birth'
-                      )
+                      updateObjectState(setUserInfo, {
+                        birth: event.target.value,
+                      })
                     }
+                    isError={userInfoError.birth}
+                    error="유효한 나이를 입력해 주세요."
                   />
-                  {userInfoError.birth && (
-                    <span className="text-[11px] text-red-400 px-2">
-                      유효한 나이를 입력해 주세요.
-                    </span>
-                  )}
                 </div>
-
-                {/* <Select
-                options={Education}
-                placeholder="학력"
-                value={userInfo.education}
-                setValue={(value) => onChangeObjectInput(value ?? '', 'education')}
-              /> */}
                 <div className="w-full flex flex-col gap-1">
                   <Select
                     options={Gender}
                     placeholder="성별"
                     value={userInfo.gender}
                     setValue={(value) =>
-                      onChangeObjectInput(
-                        userInfo,
-                        setUserInfo,
-                        value ?? '',
-                        'gender'
-                      )
+                      updateObjectState(setUserInfo, { gender: value ?? '' })
                     }
+                    isError={userInfoError.gender}
+                    error="성별을 선택해 주세요."
                   />
-                  {userInfoError.gender && (
-                    <span className="text-[11px] text-red-400 px-2">
-                      성별을 선택해 주세요.
-                    </span>
-                  )}
                 </div>
               </form>
               <div className="w-[264px] flex flex-col items-center gap-3 mt-[47px]">
@@ -548,40 +518,27 @@ const SignUp = () => {
           <section className="w-[480px] h-[230px] bg-black rounded-2xl"></section>
         </div>
       </div>
-      <Modal
-        title="이메일 인증"
-        isOpen={isCertifyOpen}
-        onClose={onToggleCertifyModal}
-        width={350}
-        height={200}
-      >
+      <Modal name="verifyEmail" width="w-[350px]" height="h-[200px]">
         <div
-          className={`flex flex-col ${userInfoError.code ? 'gap-1' : 'gap-4'}`}
+          className={`flex flex-col ${userInfoError.code ? 'gap-1' : 'gap-4'} p-[16px]`}
         >
-          <div>
-            <div className="relative w-full flex flex-col gap-1">
+          <div className="text-center">
+            <span className="text-[24px] font-bold ">이메일 인증</span>
+            <div className="relative w-full flex flex-col gap-1 mt-4">
               <Input
                 label="인증번호"
                 value={userInfo.code}
                 onChange={(event) =>
-                  onChangeObjectInput(
-                    userInfo,
-                    setUserInfo,
-                    event.target.value,
-                    'code'
-                  )
+                  updateObjectState(setUserInfo, { code: event.target.value })
                 }
+                isError={userInfoError.code}
+                error="인증번호가 일치하지 않습니다."
               />
               <span className="absolute right-[16px] top-[50%] translate-y-[-50%] text-[14px] text-red-600 font-medium">
                 {String(minutes).padStart(2, '0')}:
                 {String(seconds).padStart(2, '0')}
               </span>
             </div>
-            {userInfoError.code && (
-              <span className="text-[11px] text-red-400 px-2">
-                인증번호가 일치하지 않습니다.
-              </span>
-            )}
           </div>
           <div className="flex gap-4">
             <Button

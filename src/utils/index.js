@@ -1,2 +1,2 @@
-export { default as checkEmptyObjectInput } from './checkEmptyObjectInput';
-export { default as onChangeObjectInput } from './onChangeObjectInput';
+export { default as checkEmptyObject } from './checkEmptyObject';
+export { default as updateObjectState } from './updateObjectState';

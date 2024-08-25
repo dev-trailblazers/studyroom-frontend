@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Notification } from '@components/pages/Home/Notification/Notification';
-import { useNotifications } from '@hooks/useNotifications';
+import { Notification } from '@/components/pages/home/notification/Notification';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const Header = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ const Header = () => {
   const getActiveIndexFromPath = useMemo(() => {
     return (path: string): number => {
       switch (path) {
-        case '/home':
+        case '/':
           return 0;
         case '/notice':
           return 1;
@@ -45,7 +45,7 @@ const Header = () => {
   } = useNotifications(isAlarmOpen);
 
   const links = [
-    { label: '홈', path: '/home' },
+    { label: '홈', path: '/' },
     { label: '공지사항', path: '/notice' },
     { label: '알림', path: '' },
     { label: '내정보', path: '/mypage' },
@@ -148,7 +148,7 @@ const Header = () => {
       </div>
       <div className="flex items-center justify-between">
         <a
-          href="/home"
+          href="/"
           className="flex items-center gap-2"
           aria-label="홈으로 이동"
         >
@@ -158,7 +158,7 @@ const Header = () => {
           <img src="/logo.svg" alt="logo" />
         </a>
         <nav
-          className="flex flex-row items-center w-[500px] h-[60px] rounded-md bg-blue_02 shadow-md"
+          className="flex flex-row items-center w-[500px] h-[60px] rounded-md bg-primary-400 shadow-md"
           role="group"
           aria-labelledby="navigation-title"
         >
